@@ -1278,49 +1278,123 @@
                         <li style="margin-bottom: 4px;">Borra el código existente y pega el siguiente script:</li>
                     </ol>
 
-                    <div class="code-block" id="appsScriptCodeBlock">function doPost(e) {
+                    <div class="code-block" id="appsScriptCodeBlock">// 🛠️ CONTROL DE OBRA: SCRIPT NATIVO CON SOPORTE WBS DINÁMICO
+// Copia todo este código en el editor de Apps Script de tu Google Sheets
+
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('🛠️ Control de Obra')
+    .addItem('📝 Abrir Reporte Diario', 'mostrarReporteObra')
+    .addToUi();
+}
+
+function mostrarReporteObra() {
+  var gitHubRawUrl = "https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/index.html";
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data = JSON.parse(e.postData.contents);
+    var response = UrlFetchApp.fetch(gitHubRawUrl);
+    var htmlContent = response.getContentText();
+    var htmlOutput = HtmlService.createHtmlOutput(htmlContent)
+        .setTitle('Reporte Diario de Avance de Obra')
+        .setWidth(430)
+        .setHeight(850);
+    SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'Reporte Diario - Casa Unifamiliar');
+  } catch (error) {
+    SpreadsheetApp.getUi().alert("Error al cargar desde GitHub: " + error.toString());
+  }
+}
+
+function doGet(e) {
+  try {
+    var action = e.parameter.action;
+    if (action === "getWBS") {
+      var wbs = obtenerActividadesWBS();
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", wbs: wbs }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Acción no válida" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function obtenerActividadesWBS() {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("WBS_Actividades");
+    if (!sheet) return [];
+    
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 6) return [];
+    
+    var values = sheet.getRange(6, 1, lastRow - 5, 3).getValues();
+    var wbsList = [];
+    for (var i = 0; i < values.length; i++) {
+      var codigo = values[i][0].toString().trim();
+      var desc = values[i][1].toString().trim();
+      var activa = values[i][2].toString().trim().toUpperCase();
+      
+      if (codigo && desc && activa === "SI") {
+        wbsList.push({
+          wbs: codigo,
+          descripcion: desc,
+          description: "[" + codigo + "] " + desc
+        });
+      }
+    }
+    return wbsList;
+  } catch(e) {
+    return [];
+  }
+}
+
+function registrarReporte(data) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Reportes_Diarios") || ss.getActiveSheet();
+    
+    if (sheet.getLastRow() === 0 || sheet.getName() !== "Reportes_Diarios") {
+      sheet = ss.getSheetByName("Reportes_Diarios");
+      if (!sheet) sheet = ss.insertSheet("Reportes_Diarios");
+    }
     
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        "Fecha", "Responsable", "Proyecto", "Clima", 
+        "Fecha", "Responsable de Obra", "Nombre Proyecto", "Estado Clima", 
         "Capataces", "Operarios", "Oficiales", "Peones", "Subcontratos",
-        "Jornada Laboral", "Tareas del Día", "Avance Global %",
-        "Materiales Recibidos", "Incidentes", "Observaciones", "Firma"
+        "Jornada Laboral", "Tareas del Día (Descripción y Avance)", "Avance Promedio Diario %",
+        "Materiales Recibidos", "Incidentes / Demoras", "Observaciones / Calidad", "Firma Digital (Base64)"
       ]);
-      sheet.getRange(1, 1, 1, 16).setFontWeight("bold").setBackground("#F1F5F9");
+      sheet.getRange(1, 1, 1, 16).setFontWeight("bold").setBackground("#1E293B").setFontColor("#FFFFFF");
     }
     
-    var tareas = data.tareas.map(function(t) { return t.tarea + " (" + t.avance + "%)"; }).join("\n");
-    var materiales = data.materiales.map(function(m) { return m.cant + " " + m.un + " de " + m.material; }).join("\n");
+    var tareasText = data.tareas.map(function(t) { return t.tarea + " (" + t.avance + "%)"; }).join("\n");
+    var materialesText = data.materiales.map(function(m) { return m.cant + " " + m.un + " de " + m.material; }).join("\n");
     
     sheet.appendRow([
-      data.fecha,
-      data.responsable,
-      data.proyecto,
-      data.clima,
-      data.personal.capataz,
-      data.personal.operario,
-      data.personal.oficial,
-      data.personal.peon,
-      data.personal.subcontrato,
+      data.fecha, data.responsable, data.proyecto, data.clima,
+      data.personal.capataz, data.personal.operario, data.personal.oficial, data.personal.peon, data.personal.subcontrato,
       data.jornada.inicio + " a " + data.jornada.fin,
-      tareas,
-      data.avanceGlobal + "%",
-      materiales,
-      data.incidentes,
-      data.observaciones,
-      data.firma
+      tareasText, data.avanceGlobal + "%", materialesText,
+      data.incidentes, data.observaciones, data.firma
     ]);
     
     sheet.autoResizeColumns(1, 16);
-    
-    return ContentService.createTextOutput(JSON.stringify({"status": "success"}))
+    return "success";
+  } catch(e) {
+    throw new Error(e.toString());
+  }
+}
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    registrarReporte(data);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
       .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({"status": "error", "message": err.toString()}))
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }</div>
@@ -1366,11 +1440,12 @@
         // Load webhook URL from local storage or fallback to the hardcoded constant above
         let webhookUrl = localStorage.getItem('google_sheet_webhook_url') || APPS_SCRIPT_URL;
 
-        // Standard construction tasks to initialize
+        // Standard construction tasks to initialize (offline default fallback)
         let initialTasks = [
-            { id: 1, description: "Cimentación: Vaciado de concreto en zapatas", progress: 85 },
-            { id: 2, description: "Habilitado de acero para columnas 1er nivel", progress: 60 },
-            { id: 3, description: "Encofrado de sobrecimientos reforzados", progress: 40 }
+            { id: 1, description: "[1.1] Almacén, oficina y caseta de guardanía", progress: 0 },
+            { id: 2, description: "[1.2] Limpieza de terreno manual", progress: 0 },
+            { id: 3, description: "[1.3] Trazo, niveles y replanteo preliminar", progress: 0 },
+            { id: 4, description: "[2.1] Excavación de zapatas y cimientos corridos", progress: 0 }
         ];
 
         // Standard initial materials received
@@ -1392,10 +1467,6 @@
             // Initialize Climate selection
             initClimatePicker();
 
-            // Render default list elements
-            renderTasks();
-            renderMaterials();
-
             // Initialize Signature Canvas
             initSignatureCanvas();
 
@@ -1407,9 +1478,82 @@
             window.addEventListener('online', updateOnlineStatus);
             window.addEventListener('offline', updateOnlineStatus);
 
-            // Compute global progress initial
-            updateGlobalProgress();
+            // Render materials
+            renderMaterials();
+
+            // DYNAMICALLY LOAD WBS ACTIVITIES FROM EXCEL / GOOGLE SHEET
+            cargarWBSDesdeExcel();
         });
+
+        // Dynamic WBS importer
+        function cargarWBSDesdeExcel() {
+            const isGoogleSandbox = (typeof google !== 'undefined' && google.script && google.script.run);
+            const container = document.getElementById('taskListContainer');
+
+            if (isGoogleSandbox) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:30px; color:var(--text-muted);">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:var(--primary); margin-bottom:10px;"></i>
+                        <p style="font-size:0.75rem; font-weight:500;">Cargando WBS del Proyecto...</p>
+                    </div>
+                `;
+                
+                google.script.run
+                    .withSuccessHandler(function(actividades) {
+                        if (actividades && actividades.length > 0) {
+                            inicializarActividadesWBS(actividades);
+                        } else {
+                            renderTasks();
+                            updateGlobalProgress();
+                        }
+                    })
+                    .withFailureHandler(function(err) {
+                        console.error("Error cargando WBS:", err);
+                        renderTasks();
+                        updateGlobalProgress();
+                    })
+                    .obtenerActividadesWBS();
+            } else if (webhookUrl && navigator.onLine) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:30px; color:var(--text-muted);">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:var(--primary); margin-bottom:10px;"></i>
+                        <p style="font-size:0.75rem; font-weight:500;">Cargando WBS desde servidor...</p>
+                    </div>
+                `;
+
+                fetch(webhookUrl + "?action=getWBS")
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.status === "success" && data.wbs && data.wbs.length > 0) {
+                            inicializarActividadesWBS(data.wbs);
+                        } else {
+                            renderTasks();
+                            updateGlobalProgress();
+                        }
+                    })
+                    .catch(err => {
+                        console.warn("No se pudo cargar WBS remoto, usando local offline:", err);
+                        renderTasks();
+                        updateGlobalProgress();
+                    });
+            } else {
+                renderTasks();
+                updateGlobalProgress();
+            }
+        }
+
+        function inicializarActividadesWBS(wbsArray) {
+            if (!wbsArray || wbsArray.length === 0) return;
+            initialTasks = wbsArray.map((item, idx) => {
+                return {
+                    id: idx + 1,
+                    description: item.description || `[${item.wbs}] ${item.descripcion}`,
+                    progress: item.progress || 0
+                };
+            });
+            renderTasks();
+            updateGlobalProgress();
+        }
 
         // 1. ONLINE/OFFLINE STATE HANDLER
         function updateOnlineStatus() {
