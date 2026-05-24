@@ -1,2148 +1,1247 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reporte Diario de Avance de Obra</title>
-    <!-- Google Fonts: Outfit & Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Premium Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --primary: #F97316; /* Orange Amber Construction Accent */
-            --primary-hover: #EA580C;
-            --primary-light: #FFEDD5;
-            --dark-bg: #0F172A; /* Slate 900 for desktop body */
-            --mobile-bg: #F8FAFC; /* Slate 50 for mobile app body */
-            --card-bg: #FFFFFF;
-            --text-main: #1E293B; /* Slate 800 */
-            --text-muted: #64748B; /* Slate 500 */
-            --border-color: #E2E8F0; /* Slate 200 */
-            --success: #10B981; /* Emerald 500 */
-            --success-light: #D1FAE5;
-            --danger: #EF4444; /* Red 500 */
-            --danger-light: #FEE2E2;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --radius: 16px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--dark-bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-        }
-
-        /* 9:16 aspect ratio mock frame on desktop, full-screen on mobile */
-        .phone-frame {
-            width: 100%;
-            max-width: 430px; /* Standard premium mobile width (iPhone 15 Pro Max size) */
-            height: 100vh;
-            max-height: 932px; /* Standard mobile height */
-            background-color: var(--mobile-bg);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        @media (min-width: 480px) {
-            .phone-frame {
-                border-radius: 40px;
-                border: 12px solid #1E293B; /* Elegant bezel */
-                height: 90vh;
-                max-height: 850px;
-                margin: 20px 0;
-            }
-            body {
-                background: radial-gradient(circle at top left, #1e293b, #0f172a);
-            }
-        }
-
-        /* App Header */
-        .app-header {
-            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-            color: white;
-            padding: 20px 18px 24px;
-            position: relative;
-            border-bottom: 3px solid var(--primary);
-            box-shadow: var(--shadow-md);
-            flex-shrink: 0;
-        }
-
-        .app-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: repeating-linear-gradient(
-                -45deg,
-                #F97316,
-                #F97316 10px,
-                #1E293B 10px,
-                #1E293B 20px
-            );
-        }
-
-        .header-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-icon {
-            background-color: var(--primary);
-            color: #1E293B;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            font-weight: 800;
-            box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
-            animation: pulse-orange 2s infinite;
-        }
-
-        @keyframes pulse-orange {
-            0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
-        }
-
-        .logo-text h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #FFFFFF;
-        }
-
-        .logo-text p {
-            font-size: 0.68rem;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .sync-badge {
-            font-size: 0.7rem;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #94A3B8;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .sync-badge.synced {
-            background-color: var(--success-light);
-            color: #065F46;
-        }
-
-        .sync-badge.offline {
-            background-color: var(--danger-light);
-            color: #991B1B;
-        }
-
-        .sync-badge i {
-            font-size: 0.65rem;
-        }
-
-        /* Navigation Tabs */
-        .tab-navigation {
-            display: flex;
-            background-color: #1E293B;
-            padding: 4px;
-            border-radius: 12px;
-            gap: 4px;
-            margin-top: 14px;
-        }
-
-        .nav-tab {
-            flex: 1;
-            background: none;
-            border: none;
-            color: #94A3B8;
-            padding: 8px 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            transition: var(--transition);
-        }
-
-        .nav-tab i {
-            font-size: 1rem;
-        }
-
-        .nav-tab.active {
-            background-color: var(--primary);
-            color: #1E293B;
-            font-weight: 700;
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* Main Scrollable Content */
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px 14px;
-            scroll-behavior: smooth;
-        }
-
-        /* Hide Scrollbar */
-        .app-content::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Form Sections */
-        .form-section {
-            display: none; /* Controlled by JS tabs */
-            animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .form-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Section Cards */
-        .section-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 18px 16px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .section-card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: #CBD5E1;
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .card-header i {
-            font-size: 1.15rem;
-            color: var(--primary);
-        }
-
-        .card-header h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #1E293B;
-        }
-
-        /* Input Controls */
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 12px;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            pointer-events: none;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 12px 10px 38px;
-            font-size: 0.88rem;
-            border-radius: 10px;
-            border: 1.5px solid var(--border-color);
-            background-color: #FFF;
-            color: var(--text-main);
-            outline: none;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
-        }
-
-        .form-control.no-icon {
-            padding-left: 12px;
-        }
-
-        select.form-control {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-            padding-right: 36px;
-        }
-
-        textarea.form-control {
-            min-height: 70px;
-            resize: none;
-        }
-
-        /* Row Layouts */
-        .form-row-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        /* Climate Picker Component */
-        .climate-picker {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        .climate-option {
-            border: 1.5px solid var(--border-color);
-            border-radius: 10px;
-            padding: 8px 4px;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            background: white;
-        }
-
-        .climate-option i {
-            font-size: 1.25rem;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .climate-option span {
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            display: block;
-        }
-
-        /* Color variations for weather states */
-        .climate-option[data-weather="soleado"] i { color: #EAB308; }
-        .climate-option[data-weather="nublado"] i { color: #64748B; }
-        .climate-option[data-weather="lluvioso"] i { color: #3B82F6; }
-        .climate-option[data-weather="viento"] i { color: #14B8A6; }
-
-        .climate-option.active {
-            border-color: var(--primary);
-            background-color: var(--primary-light);
-        }
-        .climate-option.active span {
-            color: #C2410C;
-        }
-
-        /* Personnel Counter Component */
-        .counter-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .counter-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px dashed var(--border-color);
-        }
-
-        .counter-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .counter-label {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .counter-name {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: #334155;
-        }
-
-        .counter-desc {
-            font-size: 0.68rem;
-            color: var(--text-muted);
-        }
-
-        .counter-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .counter-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 1px solid var(--border-color);
-            background-color: #FFF;
-            color: #475569;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .counter-btn:active {
-            transform: scale(0.9);
-            background-color: var(--border-color);
-        }
-
-        .counter-val {
-            font-size: 0.95rem;
-            font-weight: 700;
-            min-width: 24px;
-            text-align: center;
-            color: #1E293B;
-        }
-
-        /* Dynamic Tasks List & Cards */
-        .dynamic-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .dynamic-card {
-            background-color: var(--mobile-bg);
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            position: relative;
-            animation: slideInUp 0.25s ease-out;
-        }
-
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .dynamic-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .dynamic-card-title {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .remove-card-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            font-size: 0.88rem;
-            padding: 4px;
-            border-radius: 4px;
-            transition: var(--transition);
-        }
-
-        .remove-card-btn:hover {
-            background-color: var(--danger-light);
-        }
-
-        /* Sliders */
-        .progress-slider-container {
-            margin-top: 10px;
-        }
-
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 4px;
-        }
-
-        .slider-bar-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .progress-slider {
-            flex: 1;
-            -webkit-appearance: none;
-            height: 6px;
-            border-radius: 3px;
-            background: #CBD5E1;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .progress-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: 2px solid #FFF;
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .progress-slider::-webkit-slider-thumb:active {
-            transform: scale(1.2);
-        }
-
-        .slider-value {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--primary);
-            min-width: 38px;
-            text-align: right;
-        }
-
-        /* Buttons styling */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 100%;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1.5px dashed var(--primary);
-            color: var(--primary);
-            margin-top: 8px;
-        }
-
-        .btn-outline:hover {
-            background-color: var(--primary-light);
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: #1E293B;
-            font-weight: 700;
-            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.25);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-            background-color: var(--primary-hover);
-        }
-
-        /* Signature Canvas Component */
-        .signature-container {
-            border: 1.5px solid var(--border-color);
-            border-radius: 12px;
-            background-color: #FFF;
-            overflow: hidden;
-            position: relative;
-            margin-top: 8px;
-        }
-
-        .signature-header-row {
-            display: flex;
-            justify-content: space-between;
-            background-color: #F1F5F9;
-            padding: 6px 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .signature-header-row span {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .signature-clear-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .signature-canvas {
-            display: block;
-            width: 100%;
-            height: 120px;
-            background-color: #FFF;
-            touch-action: none;
-        }
-
-        /* Photo Upload Styling */
-        .photo-uploader {
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            background-color: var(--mobile-bg);
-            transition: var(--transition);
-        }
-
-        .photo-uploader:hover {
-            border-color: var(--primary);
-        }
-
-        .photo-uploader i {
-            font-size: 1.75rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .photo-uploader p {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        .photo-preview-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .photo-preview-item {
-            width: 100%;
-            padding-bottom: 100%; /* square 1:1 */
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-
-        .photo-preview-item img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .photo-preview-remove {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background-color: rgba(239, 68, 68, 0.85);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.6rem;
-            cursor: pointer;
-        }
-
-        /* Sticky Footer Navigation / Submission Button */
-        .app-footer {
-            background-color: #FFFFFF;
-            border-top: 1px solid var(--border-color);
-            padding: 14px 18px;
-            flex-shrink: 0;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.03);
-            display: flex;
-            gap: 12px;
-        }
-
-        .footer-left-btn {
-            width: 48px;
-            height: 44px;
-            border-radius: 10px;
-            border: 1.5px solid var(--border-color);
-            background-color: #FFF;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.05rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .footer-left-btn:hover {
-            background-color: var(--mobile-bg);
-            border-color: #CBD5E1;
-        }
-
-        /* Success & Custom Modals */
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-card {
-            background-color: #FFF;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 350px;
-            padding: 24px;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-            transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .modal-overlay.active .modal-card {
-            transform: scale(1);
-        }
-
-        .modal-icon-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: var(--success-light);
-            color: var(--success);
-            font-size: 1.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-        }
-
-        .modal-icon-circle.danger {
-            background-color: var(--danger-light);
-            color: var(--danger);
-        }
-
-        .modal-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #1E293B;
-            margin-bottom: 8px;
-        }
-
-        .modal-text {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        /* Config Modal for Webhook */
-        .modal-card.config-modal {
-            max-width: 390px;
-            text-align: left;
-        }
-
-        .code-block {
-            background-color: #0F172A;
-            color: #38BDF8;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.65rem;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            margin-bottom: 12px;
-            max-height: 150px;
-        }
-
-        /* Global Project Progress Bar */
-        .project-progress-card {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            color: white;
-            border: none;
-        }
-        .project-progress-card h3 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 6px;
-        }
-        .project-progress-metrics {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 8px;
-        }
-        .project-progress-percentage {
-            font-size: 1.85rem;
-            font-weight: 800;
-            font-family: 'Outfit', sans-serif;
-            color: white;
-        }
-        .project-progress-track {
-            height: 8px;
-            border-radius: 4px;
-            background-color: rgba(255, 255, 255, 0.15);
-            overflow: hidden;
-            width: 100%;
-        }
-        .project-progress-bar {
-            height: 100%;
-            background-color: var(--primary);
-            width: 0%;
-            transition: width 0.5s ease-out;
-            box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
-        }
-
-    </style>
-</head>
-<body>
-
-    <!-- Main Phone Frame mimicking 9:16 aspect ratio on desktops -->
-    <div class="phone-frame">
-        
-        <!-- App Header -->
-        <header class="app-header">
-            <div class="header-title-row">
-                <div class="logo-area">
-                    <div class="logo-icon">
-                        <i class="fa-solid fa-helmet-safety"></i>
-                    </div>
-                    <div class="logo-text">
-                        <h1>AvanceObra</h1>
-                        <p>Vivienda Unifamiliar</p>
-                    </div>
-                </div>
-                <div class="sync-badge synced" id="syncStatusBadge" onclick="showConfigModal()">
-                    <i class="fa-solid fa-wifi"></i>
-                    <span id="syncStatusText">Conectado</span>
-                </div>
-            </div>
-
-            <!-- Tabs Navigation -->
-            <div class="tab-navigation">
-                <button class="nav-tab active" data-target="sec-general">
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span>General</span>
-                </button>
-                <button class="nav-tab" data-target="sec-personal">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Personal</span>
-                </button>
-                <button class="nav-tab" data-target="sec-tareas">
-                    <i class="fa-solid fa-list-check"></i>
-                    <span>Tareas</span>
-                </button>
-                <button class="nav-tab" data-target="sec-entregas">
-                    <i class="fa-solid fa-truck-ramp-box"></i>
-                    <span>Materiales</span>
-                </button>
-            </div>
-        </header>
-
-        <!-- Dynamic Form Body -->
-        <main class="app-content" id="formScrollContainer">
-            <form id="dailyReportForm" onsubmit="event.preventDefault();">
-                
-                <!-- TAB 1: GENERAL INFO -->
-                <div class="form-section active" id="sec-general">
-                    
-                    <!-- Global Progress Overview -->
-                    <div class="section-card project-progress-card">
-                        <h3>Avance Diario Estimado</h3>
-                        <div class="project-progress-metrics">
-                            <span class="project-progress-percentage" id="globalProgressPercent">0%</span>
-                            <span style="font-size: 0.65rem; color: #94A3B8; font-weight: 500;">Promedio de tareas del día</span>
-                        </div>
-                        <div class="project-progress-track">
-                            <div class="project-progress-bar" id="globalProgressBar"></div>
-                        </div>
-                    </div>
-
-                    <!-- General Details Card -->
-                    <div class="section-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-file-signature"></i>
-                            <h2>Datos del Reporte</h2>
-                        </div>
-
-                        <div class="form-row-2">
-                            <div class="form-group">
-                                <label for="reportDate">Fecha</label>
-                                <div class="input-wrapper">
-                                    <i class="fa-solid fa-calendar-day input-icon"></i>
-                                    <input type="date" id="reportDate" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inspectorName">Responsable</label>
-                                <div class="input-wrapper">
-                                    <i class="fa-solid fa-user-tie input-icon"></i>
-                                    <input type="text" id="inspectorName" class="form-control" placeholder="Ingeniero" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group" style="margin-top: 14px;">
-                            <label for="projectName">Nombre del Proyecto</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-house-chimney input-icon"></i>
-                                <input type="text" id="projectName" class="form-control" value="Casa Unifamiliar - Lote 12" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Climate Card -->
-                    <div class="section-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-cloud-sun"></i>
-                            <h2>Estado del Clima</h2>
-                        </div>
-                        <div class="climate-picker" id="climatePicker">
-                            <div class="climate-option active" data-weather="soleado">
-                                <i class="fa-solid fa-sun"></i>
-                                <span>Soleado</span>
-                            </div>
-                            <div class="climate-option" data-weather="nublado">
-                                <i class="fa-solid fa-cloud"></i>
-                                <span>Nublado</span>
-                            </div>
-                            <div class="climate-option" data-weather="lluvioso">
-                                <i class="fa-solid fa-cloud-showers-heavy"></i>
-                                <span>Lluvioso</span>
-                            </div>
-                            <div class="climate-option" data-weather="viento">
-                                <i class="fa-solid fa-wind"></i>
-                                <span>Viento</span>
-                            </div>
-                        </div>
-                        <!-- Hidden input to bind selection -->
-                        <input type="hidden" id="weatherState" value="soleado">
-                    </div>
-                </div>
-
-                <!-- TAB 2: PERSONNEL -->
-                <div class="form-section" id="sec-personal">
-                    <div class="section-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-users-gear"></i>
-                            <h2>Personal en Obra</h2>
-                        </div>
-                        
-                        <div class="counter-list">
-                            <!-- Capataz -->
-                            <div class="counter-item">
-                                <div class="counter-label">
-                                    <span class="counter-name">Capataz</span>
-                                    <span class="counter-desc">Supervisión y control</span>
-                                </div>
-                                <div class="counter-controls">
-                                    <button type="button" class="counter-btn" onclick="decrementCounter('capataz')"><i class="fa-solid fa-minus"></i></button>
-                                    <span class="counter-val" id="cnt-capataz">1</span>
-                                    <button type="button" class="counter-btn" onclick="incrementCounter('capataz')"><i class="fa-solid fa-plus"></i></button>
-                                </div>
-                            </div>
-                            
-                            <!-- Operario -->
-                            <div class="counter-item">
-                                <div class="counter-label">
-                                    <span class="counter-name">Operarios</span>
-                                    <span class="counter-desc">Albañilería, encofrado, acero</span>
-                                </div>
-                                <div class="counter-controls">
-                                    <button type="button" class="counter-btn" onclick="decrementCounter('operario')"><i class="fa-solid fa-minus"></i></button>
-                                    <span class="counter-val" id="cnt-operario">3</span>
-                                    <button type="button" class="counter-btn" onclick="incrementCounter('operario')"><i class="fa-solid fa-plus"></i></button>
-                                </div>
-                            </div>
-
-                            <!-- Oficial -->
-                            <div class="counter-item">
-                                <div class="counter-label">
-                                    <span class="counter-name">Oficiales</span>
-                                    <span class="counter-desc">Asistentes directos</span>
-                                </div>
-                                <div class="counter-controls">
-                                    <button type="button" class="counter-btn" onclick="decrementCounter('oficial')"><i class="fa-solid fa-minus"></i></button>
-                                    <span class="counter-val" id="cnt-oficial">2</span>
-                                    <button type="button" class="counter-btn" onclick="incrementCounter('oficial')"><i class="fa-solid fa-plus"></i></button>
-                                </div>
-                            </div>
-
-                            <!-- Peón -->
-                            <div class="counter-item">
-                                <div class="counter-label">
-                                    <span class="counter-name">Peones</span>
-                                    <span class="counter-desc">Acarreo, excavación y limpieza</span>
-                                </div>
-                                <div class="counter-controls">
-                                    <button type="button" class="counter-btn" onclick="decrementCounter('peon')"><i class="fa-solid fa-minus"></i></button>
-                                    <span class="counter-val" id="cnt-peon">4</span>
-                                    <button type="button" class="counter-btn" onclick="incrementCounter('peon')"><i class="fa-solid fa-plus"></i></button>
-                                </div>
-                            </div>
-
-                            <!-- Subcontratistas -->
-                            <div class="counter-item">
-                                <div class="counter-label">
-                                    <span class="counter-name">Subcontratos</span>
-                                    <span class="counter-desc">Instalaciones sanitarias/eléctricas</span>
-                                </div>
-                                <div class="counter-controls">
-                                    <button type="button" class="counter-btn" onclick="decrementCounter('subcontrato')"><i class="fa-solid fa-minus"></i></button>
-                                    <span class="counter-val" id="cnt-subcontrato">0</span>
-                                    <button type="button" class="counter-btn" onclick="incrementCounter('subcontrato')"><i class="fa-solid fa-plus"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Work Hours Card -->
-                    <div class="section-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-clock"></i>
-                            <h2>Jornada Laboral</h2>
-                        </div>
-                        <div class="form-row-2">
-                            <div class="form-group">
-                                <label for="hoursStart">Hora Entrada</label>
-                                <input type="time" id="hoursStart" class="form-control no-icon" value="08:00">
-                            </div>
-                            <div class="form-group">
-                                <label for="hoursEnd">Hora Salida</label>
-                                <input type="time" id="hoursEnd" class="form-control no-icon" value="17:00">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB 3: TASKS IN PROGRESS -->
-                <div class="form-section" id="sec-tareas">
-                    <div class="section-card">
-                        <div class="card-header" style="justify-content: space-between; border-bottom: none; margin-bottom: 8px;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <i class="fa-solid fa-screwdriver-wrench"></i>
-                                <h2>Tareas Realizadas</h2>
-                            </div>
-                        </div>
-                        <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom: 12px;">Describa las tareas del día y asigne su porcentaje de avance logrado.</p>
-                        
-                        <div class="dynamic-list" id="taskListContainer">
-                            <!-- Tasks will be injected dynamically by JS. Standard construction ones initialized. -->
-                        </div>
-
-                        <button type="button" class="btn btn-outline" onclick="addNewTask()">
-                            <i class="fa-solid fa-plus"></i> Agregar Nueva Tarea
-                        </button>
-                    </div>
-
-                    <!-- Photo Attachment Card -->
-                    <div class="section-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-camera"></i>
-                            <h2>Evidencia Fotográfica</h2>
-                        </div>
-                        <div class="photo-uploader" onclick="document.getElementById('photoFileInput').click()">
-                            <i class="fa-solid fa-images"></i>
-                            <p>Tocar para tomar foto o elegir archivo</p>
-                            <span style="font-size: 0.65rem; color: var(--text-muted);">Formatos: JPG, PNG (Max 3 fotos)</span>
-                            <input type="file" id="photoFileInput" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(event)">
-                        </div>
-                        <div class="photo-preview-grid" id="photoPreviewContainer"></div>
-                    </div>
-                </div>
-
-                <!-- TAB 4: MATERIALS, COMMENTS & SIGNATURE -->
-                <div class="form-section" id="sec-entregas">
-                    <div class="section-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-cubes"></i>
-                            <h2>Recepción de Materiales</h2>
-                        </div>
-                        
-                        <div class="dynamic-list" id="materialListContainer">
-                            <!-- Materials will be added here -->
-                        </div>
-
-                        <button type="button" class="btn btn-outline" onclick="addNewMaterial()">
-                            <i class="fa-solid fa-plus"></i> Registrar Recepción
-                        </button>
-                    </div>
-
-                    <!-- Comments and Incidents -->
-                    <div class="section-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-clipboard-question"></i>
-                            <h2>Comentarios e Incidentes</h2>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="incidentsText">Incidentes de Seguridad / Demoras</label>
-                            <div class="input-wrapper">
-                                <textarea id="incidentsText" class="form-control no-icon" placeholder="Ningún incidente reportado en el día..."></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-group" style="margin-top: 12px;">
-                            <label for="observationsText">Observaciones de Calidad / Notas</label>
-                            <div class="input-wrapper">
-                                <textarea id="observationsText" class="form-control no-icon" placeholder="Observaciones de avance o notas generales de la obra..."></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Digital Signature -->
-                    <div class="section-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-pen-nib"></i>
-                            <h2>Firma de Conformidad</h2>
-                        </div>
-                        <p style="font-size: 0.72rem; color: var(--text-muted);">Firma directamente en el recuadro para validar el reporte diario.</p>
-                        
-                        <div class="signature-container">
-                            <div class="signature-header-row">
-                                <span>Firma del Inspector / Residente</span>
-                                <button type="button" class="signature-clear-btn" onclick="clearSignatureCanvas()">Limpiar</button>
-                            </div>
-                            <canvas class="signature-canvas" id="sigCanvas"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-            </form>
-        </main>
-
-        <!-- Footer Submission Row -->
-        <footer class="app-footer">
-            <button class="footer-left-btn" type="button" onclick="showConfigModal()" title="Configurar Vinculación a Google Sheets">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-            <button class="btn btn-primary" type="button" onclick="submitDailyReport()" style="flex: 1;">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Enviar Reporte Diario
-            </button>
-        </footer>
-
-        <!-- MODAL 1: SUCCESS MODAL -->
-        <div class="modal-overlay" id="successModalOverlay">
-            <div class="modal-card">
-                <div class="modal-icon-circle">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-                <h3 class="modal-title" id="modalTitle">Reporte Enviado</h3>
-                <p class="modal-text" id="modalText">Los datos del avance de obra han sido vinculados correctamente a Google Sheets.</p>
-                
-                <div id="modalOfflineOptions" style="display:none; flex-direction:column; gap:8px; margin-bottom: 16px;">
-                    <button class="btn btn-primary" onclick="downloadOfflineBackup('csv')" style="font-size: 0.75rem; padding: 8px 12px; background-color: #475569; color:white; box-shadow:none;">
-                        <i class="fa-solid fa-file-csv"></i> Descargar Copia CSV
-                    </button>
-                    <button class="btn btn-outline" onclick="downloadOfflineBackup('json')" style="font-size: 0.75rem; padding: 8px 12px;">
-                        <i class="fa-solid fa-file-code"></i> Descargar Copia JSON
-                    </button>
-                </div>
-
-                <button class="btn btn-primary" onclick="closeSuccessModal()">
-                    Entendido
-                </button>
-            </div>
-        </div>
-
-        <!-- MODAL 2: CONFIG & GOOGLE SHEETS SETUP INSTRUCTIONS -->
-        <div class="modal-overlay" id="configModalOverlay">
-            <div class="modal-card config-modal">
-                <div class="card-header" style="border-bottom:none; margin-bottom:8px; padding-bottom:0;">
-                    <i class="fa-brands fa-google-drive" style="color: #34A853; font-size: 1.4rem;"></i>
-                    <h2 style="font-family:'Outfit'; font-size: 1.15rem;">Vincular Google Sheets</h2>
-                </div>
-                
-                <div style="max-height: 480px; overflow-y: auto; padding-right: 4px;">
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
-                        Los datos se envían de forma directa a tu <strong>Google Sheets</strong> a través de una macro en Apps Script.
-                    </p>
-
-                    <!-- Webhook URL Input -->
-                    <div class="form-group" style="margin-bottom: 14px;">
-                        <label for="webhookUrlInput" style="font-size:0.7rem; color:var(--text-main);">URL de Google Apps Script (Web App)</label>
-                        <input type="text" id="webhookUrlInput" class="form-control no-icon" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:0.75rem; padding: 8px 10px;">
-                        <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 4px;">Pega aquí la URL de tu script ejecutado como aplicación web.</p>
-                    </div>
-
-                    <!-- Step-by-step instructions -->
-                    <h4 style="font-size: 0.8rem; font-weight:700; color: #1E293B; margin: 12px 0 6px;">Instrucciones del Servidor Google Sheets:</h4>
-                    <ol style="font-size: 0.72rem; color: var(--text-muted); padding-left: 16px; margin-bottom: 12px; line-height: 1.4;">
-                        <li style="margin-bottom: 4px;">Crea una hoja de cálculo en <strong>Google Sheets</strong>.</li>
-                        <li style="margin-bottom: 4px;">Ve a <strong>Extensiones &gt; Apps Script</strong>.</li>
-                        <li style="margin-bottom: 4px;">Borra el código existente y pega el siguiente script:</li>
-                    </ol>
-
-                    <div class="code-block" id="appsScriptCodeBlock">// 🛠️ CONTROL DE OBRA: SCRIPT NATIVO CON SOPORTE WBS DINÁMICO
-// Copia todo este código en el editor de Apps Script de tu Google Sheets
-
-function onOpen() {
-  var ui = SpreadsheetApp.getUi();
-  ui.createMenu('🛠️ Control de Obra')
-    .addItem('📝 Abrir Reporte Diario', 'mostrarReporteObra')
-    .addToUi();
-}
-
-function mostrarReporteObra() {
-  var gitHubRawUrl = "https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/index.html";
-  try {
-    var response = UrlFetchApp.fetch(gitHubRawUrl);
-    var htmlContent = response.getContentText();
-    var htmlOutput = HtmlService.createHtmlOutput(htmlContent)
-        .setTitle('Reporte Diario de Avance de Obra')
-        .setWidth(430)
-        .setHeight(850);
-    SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'Reporte Diario - Casa Unifamiliar');
-  } catch (error) {
-    SpreadsheetApp.getUi().alert("Error al cargar desde GitHub: " + error.toString());
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Reporte Diario de Obra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+          colors: {
+            ink: "#172033",
+            muted: "#667085",
+            navy: "#12395b",
+            field: "#f7f9fc"
+          }
+        }
+      }
+    };
+  </script>
+  <!--
+  GOOGLE APPS SCRIPT DE REFERENCIA
+
+  const SHEETS = {
+    cabecera: "Registros_Cabecera",
+    actividades: "Registros_Actividades",
+    recursos: "Registros_Recursos"
+  };
+
+  function doPost(e) {
+    const payload = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const cab = getSheet_(ss, SHEETS.cabecera, [
+      "timestamp", "fecha", "responsable", "turno", "clima_manana", "clima_tarde",
+      "horas_efectivas", "personal_total", "accidentes", "inspecciones_seguridad",
+      "detalle_inspecciones", "conflictos", "trabajos_siguiente_dia", "observaciones"
+    ]);
+    const act = getSheet_(ss, SHEETS.actividades, [
+      "timestamp", "fecha", "responsable", "id_wbs", "nombre", "unidad",
+      "meta_dia", "cantidad_ejecutada", "avance_estimado", "observacion"
+    ]);
+    const rec = getSheet_(ss, SHEETS.recursos, [
+      "timestamp", "fecha", "responsable", "tipo", "id_recurso", "descripcion",
+      "categoria", "unidad", "cantidad", "wbs"
+    ]);
+
+    const ts = new Date();
+    cab.appendRow([
+      ts, payload.fecha, payload.responsable, payload.turno, payload.clima_manana,
+      payload.clima_tarde, payload.horas_efectivas, payload.personal_total,
+      payload.accidentes, payload.inspecciones_seguridad, payload.detalle_inspecciones,
+      payload.conflictos, payload.trabajos_siguiente_dia, payload.observaciones
+    ]);
+
+    (payload.actividades || []).forEach(a => act.appendRow([
+      ts, payload.fecha, payload.responsable, a.id_wbs, a.nombre, a.unidad,
+      a.meta_dia, a.cantidad_ejecutada, a.avance_estimado, a.observacion
+    ]));
+
+    ["mano_obra", "materiales", "equipos"].forEach(tipo => {
+      (payload[tipo] || []).forEach(r => rec.appendRow([
+        ts, payload.fecha, payload.responsable, tipo, r.id_recurso, r.descripcion,
+        r.categoria || r.tipo || "", r.unidad || "", r.cantidad, r.wbs
+      ]));
+    });
+
+    return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
-}
 
-function doGet(e) {
-  try {
-    var action = e.parameter.action;
-    if (action === "getWBS") {
-      var wbs = obtenerActividadesWBS();
-      return ContentService.createTextOutput(JSON.stringify({ status: "success", wbs: wbs }))
-        .setMimeType(ContentService.MimeType.JSON);
+  function getSheet_(ss, name, headers) {
+    let sheet = ss.getSheetByName(name);
+    if (!sheet) sheet = ss.insertSheet(name);
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length)
+        .setFontWeight("bold").setBackground("#12395b").setFontColor("#ffffff");
+      sheet.setFrozenRows(1);
     }
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Acción no válida" }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return sheet;
   }
-}
+  -->
+</head>
+<body class="bg-slate-900 text-ink font-sans">
+  <div class="app-shell min-h-screen">
+    <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <div class="mx-auto max-w-5xl px-4 py-3">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="grid h-11 w-11 place-items-center rounded-lg bg-navy text-white shadow-sm">
+              <i class="fa-solid fa-helmet-safety text-lg"></i>
+            </div>
+            <div>
+              <h1 class="text-lg font-extrabold leading-tight sm:text-xl">Reporte Diario de Obra</h1>
+              <p id="projectName" class="text-xs font-semibold text-muted">Proyecto Edificación</p>
+            </div>
+          </div>
+          <button id="reloadDataBtn" class="rounded-lg bg-slate-900 px-3 py-2 text-sm font-bold text-white active:scale-[0.99]">
+            <i class="fa-solid fa-rotate mr-1"></i> Bases
+          </button>
+        </div>
+        <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+          <div id="progressBar" class="h-full w-0 rounded-full bg-emerald-500 transition-all"></div>
+        </div>
+      </div>
+    </header>
 
-function obtenerActividadesWBS() {
-  try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("WBS_Actividades");
-    if (!sheet) return [];
-    
-    var lastRow = sheet.getLastRow();
-    if (lastRow < 6) return [];
-    
-    var values = sheet.getRange(6, 1, lastRow - 5, 3).getValues();
-    var wbsList = [];
-    for (var i = 0; i < values.length; i++) {
-      var codigo = values[i][0].toString().trim();
-      var desc = values[i][1].toString().trim();
-      var activa = values[i][2].toString().trim().toUpperCase();
-      
-      if (codigo && desc && activa === "SI") {
-        wbsList.push({
-          wbs: codigo,
-          descripcion: desc,
-          description: "[" + codigo + "] " + desc
-        });
+    <main class="mx-auto max-w-5xl px-4 pb-40 pt-4">
+      <section class="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="mb-3 flex items-center justify-between gap-3">
+          <h2 class="text-base font-extrabold text-navy">Cabecera del reporte</h2>
+          <div id="dataBadges" class="flex flex-wrap justify-end gap-1.5"></div>
+        </div>
+        <div class="grid gap-3 grid-cols-2">
+          <div>
+            <label class="mb-1 block text-sm font-bold" for="fecha">Fecha</label>
+            <input id="fecha" type="date" class="field" required>
+            <p id="fechaWarning" class="mt-1 hidden text-xs font-bold text-amber-700">La fecha no puede ser futura.</p>
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-bold" for="responsable">Responsable / Ingeniero</label>
+            <input id="responsable" list="responsablesList" type="text" class="field" placeholder="Nombre completo">
+            <datalist id="responsablesList"></datalist>
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-bold" for="turno">Turno</label>
+            <select id="turno" class="field">
+              <option>Mañana</option>
+              <option>Tarde</option>
+              <option>Noche</option>
+              <option>Continuo</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-bold" for="horas_efectivas">Horas efectivas</label>
+            <input id="horas_efectivas" type="number" min="0" step="0.5" class="field" placeholder="8.5">
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-bold" for="clima_manana">Clima mañana</label>
+            <select id="clima_manana" class="field">
+              <option>Soleado</option>
+              <option>Nublado</option>
+              <option>Lluvia</option>
+              <option>Viento</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-bold" for="clima_tarde">Clima tarde</label>
+            <select id="clima_tarde" class="field">
+              <option>Soleado</option>
+              <option>Nublado</option>
+              <option>Lluvia</option>
+              <option>Viento</option>
+            </select>
+          </div>
+          <div class="col-span-2">
+            <label class="mb-1 block text-sm font-bold text-slate-700">Tipo de Reporte *</label>
+            <div class="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
+              <button id="btnTypeProd" type="button" class="rounded-lg py-2.5 text-sm font-extrabold text-center transition-all bg-blue-600 text-white shadow-sm">
+                🏗️ Producción (EDT/WBS)
+              </button>
+              <button id="btnTypeSafety" type="button" class="rounded-lg py-2.5 text-sm font-extrabold text-center transition-all text-slate-600 hover:bg-slate-200/50">
+                🛡️ Seguridad y Sitio (HSE)
+              </button>
+            </div>
+            <input type="hidden" id="reportType" value="production">
+          </div>
+          <div id="globalChapterContainer" class="col-span-2">
+            <label class="mb-1 block text-sm font-bold text-blue-700" for="globalChapter">Capítulo / EDT del Reporte *</label>
+            <select id="globalChapter" class="field border-blue-300 font-extrabold text-blue-900" required>
+              <option value="">Seleccione el Capítulo para este Reporte</option>
+            </select>
+            <p class="mt-1.5 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold leading-relaxed text-blue-800">
+              💡 <strong>Nota:</strong> Cada reporte diario corresponde a un único Capítulo del EDT/WBS. Si supervisa frentes de diferentes capítulos, envíe reportes independientes.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <article id="activitiesAccordion" class="accordion rounded-xl border border-slate-200 bg-white shadow-sm" data-open="true">
+          <button class="accordion-toggle flex w-full items-center justify-between px-4 py-4 text-left">
+            <span class="font-extrabold text-navy"><i class="fa-solid fa-list-check mr-2"></i>Actividades ejecutadas - EV</span>
+            <i class="fa-solid fa-chevron-down transition"></i>
+          </button>
+          <div class="accordion-body px-4 pb-4">
+            <div id="activitiesList" class="space-y-3"></div>
+            <button id="addActivityBtn" class="add-btn mt-3" type="button"><i class="fa-solid fa-plus mr-2"></i>Agregar actividad</button>
+          </div>
+        </article>
+
+        <article id="laborAccordion" class="accordion rounded-xl border border-slate-200 bg-white shadow-sm">
+          <button class="accordion-toggle flex w-full items-center justify-between px-4 py-4 text-left">
+            <span class="font-extrabold text-navy"><i class="fa-solid fa-people-group mr-2"></i>Personal de mano de obra - AC</span>
+            <i class="fa-solid fa-chevron-down transition"></i>
+          </button>
+          <div class="accordion-body hidden px-4 pb-4">
+            <div id="laborList" class="space-y-3"></div>
+            <button id="addLaborBtn" class="add-btn mt-3" type="button"><i class="fa-solid fa-plus mr-2"></i>Agregar personal</button>
+          </div>
+        </article>
+
+        <article id="materialsAccordion" class="accordion rounded-xl border border-slate-200 bg-white shadow-sm">
+          <button class="accordion-toggle flex w-full items-center justify-between px-4 py-4 text-left">
+            <span class="font-extrabold text-navy"><i class="fa-solid fa-boxes-stacked mr-2"></i>Materiales consumidos - AC</span>
+            <i class="fa-solid fa-chevron-down transition"></i>
+          </button>
+          <div class="accordion-body hidden px-4 pb-4">
+            <div id="materialsList" class="space-y-3"></div>
+            <button id="addMaterialBtn" class="add-btn mt-3" type="button"><i class="fa-solid fa-plus mr-2"></i>Agregar material</button>
+          </div>
+        </article>
+
+        <article id="equipmentAccordion" class="accordion rounded-xl border border-slate-200 bg-white shadow-sm">
+          <button class="accordion-toggle flex w-full items-center justify-between px-4 py-4 text-left">
+            <span class="font-extrabold text-navy"><i class="fa-solid fa-truck-pickup mr-2"></i>Equipos utilizados - AC</span>
+            <i class="fa-solid fa-chevron-down transition"></i>
+          </button>
+          <div class="accordion-body hidden px-4 pb-4">
+            <div id="equipmentList" class="space-y-3"></div>
+            <button id="addEquipmentBtn" class="add-btn mt-3" type="button"><i class="fa-solid fa-plus mr-2"></i>Agregar equipo</button>
+          </div>
+        </article>
+
+        <article id="safetyAccordion" class="accordion rounded-xl border border-slate-200 bg-white shadow-sm">
+          <button class="accordion-toggle flex w-full items-center justify-between px-4 py-4 text-left">
+            <span class="font-extrabold text-navy"><i class="fa-solid fa-shield-halved mr-2"></i>Control y seguridad</span>
+            <i class="fa-solid fa-chevron-down transition"></i>
+          </button>
+          <div class="accordion-body hidden px-4 pb-4">
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label class="mb-1 block text-sm font-bold" for="personal_total">Personal total en obra</label>
+                <input id="personal_total" type="number" min="0" class="field">
+              </div>
+              <label class="flex min-h-[48px] items-center gap-3 rounded-lg border border-slate-200 bg-field px-3 py-2 text-sm font-bold">
+                <input id="inspecciones_seguridad" type="checkbox" class="h-5 w-5 accent-emerald-600">
+                Inspecciones de seguridad realizadas
+              </label>
+              <div class="sm:col-span-2">
+                <label class="mb-1 block text-sm font-bold" for="detalle_inspecciones">Detalle de inspecciones</label>
+                <textarea id="detalle_inspecciones" class="field min-h-24" placeholder="Breve detalle"></textarea>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="mb-1 block text-sm font-bold" for="accidentes">Accidentes / incidentes</label>
+                <textarea id="accidentes" class="field min-h-24" placeholder="Ninguno"></textarea>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="issuesAccordion" class="accordion rounded-xl border border-slate-200 bg-white shadow-sm">
+          <button class="accordion-toggle flex w-full items-center justify-between px-4 py-4 text-left">
+            <span class="font-extrabold text-navy"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Problemas y conflictos</span>
+            <i class="fa-solid fa-chevron-down transition"></i>
+          </button>
+          <div class="accordion-body hidden px-4 pb-4">
+            <div class="grid gap-3">
+              <div>
+                <label class="mb-1 block text-sm font-bold" for="conflictos">Conflictos / restricciones</label>
+                <textarea id="conflictos" class="field min-h-24" placeholder="Falta de agua, permisos, interferencias, aprobaciones pendientes"></textarea>
+              </div>
+              <div>
+                <label class="mb-1 block text-sm font-bold" for="trabajos_siguiente_dia">Trabajos para el día siguiente</label>
+                <textarea id="trabajos_siguiente_dia" class="field min-h-24" placeholder="Plan breve del día siguiente"></textarea>
+              </div>
+              <div>
+                <label class="mb-1 block text-sm font-bold" for="observaciones">Otras observaciones generales</label>
+                <textarea id="observaciones" class="field min-h-24"></textarea>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.12)] backdrop-blur">
+      <div class="mx-auto grid max-w-5xl gap-2 sm:grid-cols-3">
+        <button id="saveDraftBtn" class="footer-btn bg-slate-700 hover:bg-slate-800" type="button"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar</button>
+        <button id="downloadXlsxBtn" class="footer-btn bg-blue-700 hover:bg-blue-800" type="button"><i class="fa-solid fa-file-arrow-down mr-2"></i>Descargar XLSX</button>
+        <button id="sendBtn" class="footer-btn bg-emerald-600 hover:bg-emerald-700" type="button"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Enviar</button>
+        <button id="clearBtn" class="footer-btn bg-red-50 text-red-700 hover:bg-red-100 sm:col-span-3" type="button"><i class="fa-solid fa-trash mr-2"></i>Limpiar formulario</button>
+      </div>
+    </footer>
+  </div>
+
+  <div id="toast" class="pointer-events-none fixed left-1/2 top-4 z-50 hidden w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl px-4 py-3 text-sm font-bold text-white shadow-lg"></div>
+  <div id="spinner" class="fixed inset-0 z-50 hidden place-items-center bg-slate-950/55">
+    <div class="rounded-xl bg-white p-5 text-center shadow-xl">
+      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-700"></i>
+      <p class="mt-3 text-sm font-extrabold">Enviando reporte...</p>
+    </div>
+  </div>
+
+  <template id="activityTemplate">
+    <div class="row-card rounded-xl border border-slate-200 bg-field p-3 shadow-sm" data-kind="activity">
+      <div class="grid gap-3 lg:grid-cols-[1.8fr_0.6fr_0.6fr_0.6fr_1.5fr_auto]">
+        <div>
+          <label class="row-label">Actividad</label>
+          <select class="field activity-select" disabled>
+            <option value="">Seleccione el Capítulo en la cabecera primero</option>
+          </select>
+        </div>
+        <div>
+          <label class="row-label">Meta día</label>
+          <input class="field meta-dia bg-slate-100" readonly value="—">
+        </div>
+        <div>
+          <label class="row-label">Cantidad hoy</label>
+          <input class="field qty" type="number" step="0.01" placeholder="0.00">
+        </div>
+        <div>
+          <label class="row-label">Avance estimado</label>
+          <input class="field avance bg-slate-100" readonly value="0%">
+        </div>
+        <div>
+          <label class="row-label">Observación</label>
+          <input class="field obs" type="text" placeholder="Comentario corto">
+        </div>
+        <button class="delete-btn self-end" type="button" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <p class="warning mt-2 hidden rounded-lg bg-amber-100 px-3 py-2 text-xs font-bold text-amber-800">Cantidad supera el metrado total programado.</p>
+    </div>
+  </template>
+
+  <template id="resourceTemplate">
+    <div class="row-card rounded-xl border border-slate-200 bg-field p-3 shadow-sm" data-kind="resource">
+      <div class="grid gap-3 lg:grid-cols-[1.8fr_0.4fr_0.6fr_auto]">
+        <div>
+          <label class="row-label resource-label">Recurso</label>
+          <select class="field resource-select"></select>
+        </div>
+        <div>
+          <label class="row-label">Unidad</label>
+          <input class="field unit-indicator bg-slate-100 font-bold text-center" readonly value="—">
+        </div>
+        <div>
+          <label class="row-label">Cantidad</label>
+          <input class="field qty" type="number" step="0.01" placeholder="0.00">
+        </div>
+        <button class="delete-btn self-end" type="button" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>
+  </template>
+
+  <style>
+    .field {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 0.5rem;
+      border: 1px solid #d0d7e2;
+      background: #fff;
+      padding: 0.625rem 0.75rem;
+      font-size: 16px;
+      outline: none;
+    }
+    .field:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+    .add-btn {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 0.75rem;
+      background: #ecfdf3;
+      color: #05603a;
+      font-weight: 800;
+      border: 1px dashed #039855;
+      padding: 0.875rem 1rem;
+    }
+    .footer-btn {
+      min-height: 50px;
+      border-radius: 0.75rem;
+      color: white;
+      font-weight: 800;
+      padding: 0.75rem 1rem;
+    }
+    .delete-btn {
+      min-height: 46px;
+      min-width: 46px;
+      border-radius: 0.5rem;
+      background: #fee4e2;
+      color: #b42318;
+      font-weight: 800;
+    }
+    .row-label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #344054;
+    }
+    @media (max-width: 1023px) {
+      .row-card .grid {
+        grid-template-columns: 1fr;
+      }
+      .delete-btn {
+        width: 100%;
       }
     }
-    return wbsList;
-  } catch(e) {
-    return [];
-  }
-}
-
-function registrarReporte(data) {
-  try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("Reportes_Diarios") || ss.getActiveSheet();
-    
-    if (sheet.getLastRow() === 0 || sheet.getName() !== "Reportes_Diarios") {
-      sheet = ss.getSheetByName("Reportes_Diarios");
-      if (!sheet) sheet = ss.insertSheet("Reportes_Diarios");
+    body .app-shell .row-card div.grid {
+      grid-template-columns: 1fr !important;
     }
-    
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow([
-        "Fecha", "Responsable de Obra", "Nombre Proyecto", "Estado Clima", 
-        "Capataces", "Operarios", "Oficiales", "Peones", "Subcontratos",
-        "Jornada Laboral", "Tareas del Día (Descripción y Avance)", "Avance Promedio Diario %",
-        "Materiales Recibidos", "Incidentes / Demoras", "Observaciones / Calidad", "Firma Digital (Base64)"
-      ]);
-      sheet.getRange(1, 1, 1, 16).setFontWeight("bold").setBackground("#1E293B").setFontColor("#FFFFFF");
+    body .app-shell .row-card .delete-btn {
+      width: 100% !important;
     }
-    
-    var tareasText = data.tareas.map(function(t) { return t.tarea + " (" + t.avance + "%)"; }).join("\n");
-    var materialesText = data.materiales.map(function(m) { return m.cant + " " + m.un + " de " + m.material; }).join("\n");
-    
-    sheet.appendRow([
-      data.fecha, data.responsable, data.proyecto, data.clima,
-      data.personal.capataz, data.personal.operario, data.personal.oficial, data.personal.peon, data.personal.subcontrato,
-      data.jornada.inicio + " a " + data.jornada.fin,
-      tareasText, data.avanceGlobal + "%", materialesText,
-      data.incidentes, data.observaciones, data.firma
-    ]);
-    
-    sheet.autoResizeColumns(1, 16);
-    return "success";
-  } catch(e) {
-    throw new Error(e.toString());
-  }
-}
+    .app-shell {
+      width: min(100%, 430px);
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #f1f5f9;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+    .app-shell main {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding-bottom: 1rem !important;
+    }
+    .app-shell > footer {
+      position: static !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      flex: 0 0 auto;
+    }
+    @media (min-width: 520px) {
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+      .app-shell {
+        aspect-ratio: 9 / 16;
+        height: min(96vh, 932px);
+        min-height: 0;
+        border: 12px solid #1e293b;
+        border-radius: 34px;
+      }
+    }
+  </style>
 
-function doPost(e) {
-  try {
-    var data = JSON.parse(e.postData.contents);
-    registrarReporte(data);
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}</div>
+  <script>
+    const CONFIG = {
+      PROJECT_NAME: "Proyecto Edificación",
+      DATA_PATH: "./data/",
+      GAS_WEBAPP_URL: "https://script.google.com/macros/s/AKfycbw2P7OnxXQnwgXi0y-KiSrsRBdhH25YthoZqNhBLP9QsB5dm02zSARC79nQd-Ov3MXq/exec",
+      ENABLE_PV_META: true
+    };
 
-                    <ol start="4" style="font-size: 0.72rem; color: var(--text-muted); padding-left: 16px; margin-bottom: 16px; line-height: 1.4;">
-                        <li style="margin-bottom: 4px;">Haz clic en <strong>Implementar &gt; Nueva implementación</strong>.</li>
-                        <li style="margin-bottom: 4px;">Elige tipo: <strong>Aplicación web</strong>.</li>
-                        <li style="margin-bottom: 4px;">Ejecutar como: <strong>Tú</strong>. Acceso: <strong>Cualquiera</strong>.</li>
-                        <li style="margin-bottom: 4px;">Haz clic en Implementar, copia la URL y pégala arriba o configúrala en el código como constante.</li>
-                    </ol>
-                </div>
+    const MASTER_FILES = {
+      edt: "BD_EDT.xlsx",
+      pv: "BD_Metrados_Planificados.xlsx",
+      rrhh: "BD_RRHH.xlsx",
+      almacen: "BD_Almacen.xlsx"
+    };
 
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-outline" onclick="closeConfigModal()" style="flex:1; font-size: 0.75rem; padding: 8px;">Cancelar</button>
-                    <button class="btn btn-primary" onclick="saveWebhookConfig()" style="flex:1; font-size: 0.75rem; padding: 8px;">Guardar</button>
-                </div>
-            </div>
-        </div>
+    const STORAGE_KEYS = {
+      edt: "rdo_edt",
+      pv: "rdo_metrados_planificados",
+      rrhh: "rdo_rrhh",
+      almacen: "rdo_almacen",
+      historial: "rdo_historial",
+      draft: "rdo_borrador",
+      responsables: "rdo_responsables_historial"
+    };
 
-    </div>
+    const state = {
+      masters: { edt: [], pv: [], rrhh: [], almacen: [] },
+      savingTimer: null
+    };
 
-    <!-- Core App Logic -->
-    <script>
-        // =========================================================================
-        // CONFIGURACIÓN DIRECTA DE GOOGLE APPS SCRIPT
-        // =========================================================================
-        // Si lo deseas, puedes pegar aquí directamente tu URL de Google Apps Script Web App (termina en /exec)
-        // para que quede grabada fijamente en tu archivo HTML en GitHub:
-        const APPS_SCRIPT_URL = ""; 
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
-        // Global variables for Form Data and State
-        const counters = {
-            capataz: 1,
-            operario: 3,
-            oficial: 2,
-            peon: 4,
-            subcontrato: 0
-        };
+    document.addEventListener("DOMContentLoaded", init);
 
-        let activePhotos = [];
-        let canvas, ctx, isDrawing = false;
-        
-        // Load webhook URL from local storage or fallback to the hardcoded constant above
-        let webhookUrl = localStorage.getItem('google_sheet_webhook_url') || APPS_SCRIPT_URL;
+    function init() {
+      $("#projectName").textContent = CONFIG.PROJECT_NAME;
+      $("#fecha").valueAsDate = new Date();
+      loadMastersFromStorage();
+      setReportType("production");
+      loadDraft();
+      renderResponsibleHistory();
+      renderBadges();
+      wireEvents();
+      refreshAllSelects();
+      if ($("#activitiesList").children.length === 0) addActivityRow();
+      updateProgress();
+      autoLoadMasters();
+      setInterval(saveDraftSilently, 30000);
+    }
 
-        // Standard construction tasks to initialize (offline default fallback)
-        let initialTasks = [
-            { id: 1, description: "[1.1] Almacén, oficina y caseta de guardanía", progress: 0 },
-            { id: 2, description: "[1.2] Limpieza de terreno manual", progress: 0 },
-            { id: 3, description: "[1.3] Trazo, niveles y replanteo preliminar", progress: 0 },
-            { id: 4, description: "[2.1] Excavación de zapatas y cimientos corridos", progress: 0 }
-        ];
-
-        // Standard initial materials received
-        let initialMaterials = [
-            { id: 1, description: "Cemento Sol Pórtland Tipo I", quantity: 50, unit: "Bolsas" },
-            { id: 2, description: "Acero Corrugado de 1/2\" Arequipa", quantity: 20, unit: "Varillas" }
-        ];
-
-        // Initialization
-        window.addEventListener('DOMContentLoaded', () => {
-            // Set current date
-            const dateInput = document.getElementById('reportDate');
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.value = today;
-
-            // Load saved webhook URL if present
-            document.getElementById('webhookUrlInput').value = webhookUrl;
-
-            // Initialize Climate selection
-            initClimatePicker();
-
-            // Initialize Signature Canvas
-            initSignatureCanvas();
-
-            // Setup Tab Navigation
-            initTabs();
-
-            // Monitor online / offline status
-            updateOnlineStatus();
-            window.addEventListener('online', updateOnlineStatus);
-            window.addEventListener('offline', updateOnlineStatus);
-
-            // Render materials
-            renderMaterials();
-
-            // DYNAMICALLY LOAD WBS ACTIVITIES FROM EXCEL / GOOGLE SHEET
-            cargarWBSDesdeExcel();
+    function wireEvents() {
+      $$(".accordion-toggle").forEach(button => {
+        button.addEventListener("click", () => {
+          const acc = button.closest(".accordion");
+          const body = $(".accordion-body", acc);
+          const icon = $(".fa-chevron-down", button);
+          body.classList.toggle("hidden");
+          icon.classList.toggle("rotate-180");
         });
+      });
 
-        // Dynamic WBS importer
-        function cargarWBSDesdeExcel() {
-            const isGoogleSandbox = (typeof google !== 'undefined' && google.script && google.script.run);
-            const container = document.getElementById('taskListContainer');
+      $("#btnTypeProd").addEventListener("click", () => setReportType("production"));
+      $("#btnTypeSafety").addEventListener("click", () => setReportType("safety"));
 
-            if (isGoogleSandbox) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding:30px; color:var(--text-muted);">
-                        <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:var(--primary); margin-bottom:10px;"></i>
-                        <p style="font-size:0.75rem; font-weight:500;">Cargando WBS del Proyecto...</p>
-                    </div>
-                `;
-                
-                google.script.run
-                    .withSuccessHandler(function(actividades) {
-                        if (actividades && actividades.length > 0) {
-                            inicializarActividadesWBS(actividades);
-                        } else {
-                            renderTasks();
-                            updateGlobalProgress();
-                        }
-                    })
-                    .withFailureHandler(function(err) {
-                        console.error("Error cargando WBS:", err);
-                        renderTasks();
-                        updateGlobalProgress();
-                    })
-                    .obtenerActividadesWBS();
-            } else if (webhookUrl && navigator.onLine) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding:30px; color:var(--text-muted);">
-                        <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:var(--primary); margin-bottom:10px;"></i>
-                        <p style="font-size:0.75rem; font-weight:500;">Cargando WBS desde servidor...</p>
-                    </div>
-                `;
+      $("#reloadDataBtn").addEventListener("click", autoLoadMasters);
+      $("#addActivityBtn").addEventListener("click", addActivityRow);
+      $("#addLaborBtn").addEventListener("click", () => addResourceRow("labor"));
+      $("#addMaterialBtn").addEventListener("click", () => addResourceRow("material"));
+      $("#addEquipmentBtn").addEventListener("click", () => addResourceRow("equipment"));
+      $("#saveDraftBtn").addEventListener("click", () => { saveDraft(); showToast("Borrador guardado.", "ok"); });
+      $("#downloadXlsxBtn").addEventListener("click", downloadReportXlsx);
+      $("#sendBtn").addEventListener("click", sendToGoogleSheets);
+      $("#clearBtn").addEventListener("click", clearForm);
 
-                fetch(webhookUrl + "?action=getWBS")
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && data.status === "success" && data.wbs && data.wbs.length > 0) {
-                            inicializarActividadesWBS(data.wbs);
-                        } else {
-                            renderTasks();
-                            updateGlobalProgress();
-                        }
-                    })
-                    .catch(err => {
-                        console.warn("No se pudo cargar WBS remoto, usando local offline:", err);
-                        renderTasks();
-                        updateGlobalProgress();
-                    });
-            } else {
-                renderTasks();
-                updateGlobalProgress();
-            }
+      document.addEventListener("input", event => {
+        if (event.target.matches("input, textarea, select")) {
+          validateSoft();
+          updateProgress();
+          queueDraftSave();
+        }
+      });
+
+      $("#fecha").addEventListener("change", () => {
+        refreshActivityOptions();
+        updateAllActivityRows();
+      });
+
+      $("#globalChapter").addEventListener("change", () => {
+        $("#activitiesList").innerHTML = "";
+        $("#laborList").innerHTML = "";
+        $("#materialsList").innerHTML = "";
+        $("#equipmentList").innerHTML = "";
+
+        if ($("#globalChapter").value) {
+          addActivityRow();
         }
 
-        function inicializarActividadesWBS(wbsArray) {
-            if (!wbsArray || wbsArray.length === 0) return;
-            initialTasks = wbsArray.map((item, idx) => {
-                return {
-                    id: idx + 1,
-                    description: item.description || `[${item.wbs}] ${item.descripcion}`,
-                    progress: item.progress || 0
-                };
-            });
-            renderTasks();
-            updateGlobalProgress();
+        validateResourceSections();
+        updateProgress();
+        queueDraftSave();
+      });
+    }
+
+    async function autoLoadMasters() {
+      const loaded = {};
+      for (const [key, file] of Object.entries(MASTER_FILES)) {
+        try {
+          const response = await fetchMasterFile(file);
+          if (!response.ok) throw new Error("No disponible");
+          const blob = await response.blob();
+          state.masters[key] = await parseDataFile(blob, file);
+          loaded[key] = true;
+        } catch (error) {
+          loaded[key] = false;
         }
+      }
+      saveMastersToStorage();
+      renderBadges();
+      refreshAllSelects();
+      if (Object.values(loaded).some(Boolean)) showToast("Bases de datos actualizadas.", "ok");
+    }
 
-        // 1. ONLINE/OFFLINE STATE HANDLER
-        function updateOnlineStatus() {
-            const badge = document.getElementById('syncStatusBadge');
-            const text = document.getElementById('syncStatusText');
-            
-            if (navigator.onLine) {
-                badge.className = 'sync-badge synced';
-                text.innerText = webhookUrl ? 'Vinculado' : 'Conectado';
-                badge.querySelector('i').className = 'fa-solid fa-wifi';
-            } else {
-                badge.className = 'sync-badge offline';
-                text.innerText = 'Sin Red (Local)';
-                badge.querySelector('i').className = 'fa-solid fa-wifi-slash';
-            }
+    async function fetchMasterFile(file) {
+      const candidates = [
+        `${CONFIG.DATA_PATH}${file}`,
+        `./${file}`
+      ];
+
+      for (const url of candidates) {
+        try {
+          const response = await fetch(url, { cache: "no-store" });
+          if (response.ok) return response;
+        } catch (error) {
+          // En file:// algunos navegadores bloquean fetch local; se mantiene carga manual como respaldo.
         }
+      }
 
-        // 2. CONFIG MODAL HANDLERS
-        function showConfigModal() {
-            document.getElementById('configModalOverlay').classList.add('active');
+      return new Response("", { status: 404 });
+    }
+
+    async function handleManualFiles(event) {
+      const files = Array.from(event.target.files || []);
+      for (const file of files) {
+        const key = identifyMasterKey(file.name);
+        if (!key) continue;
+        state.masters[key] = await parseDataFile(file, file.name);
+      }
+      saveMastersToStorage();
+      renderBadges();
+      refreshAllSelects();
+      showToast("Bases cargadas manualmente.", "ok");
+      event.target.value = "";
+    }
+
+    function identifyMasterKey(name) {
+      const lower = name.toLowerCase();
+      if (lower.includes("edt") || lower.includes("wbs")) return "edt";
+      if (lower.includes("pv") || lower.includes("planificado")) return "pv";
+      if (lower.includes("rrhh") || lower.includes("recurso")) return "rrhh";
+      if (lower.includes("almacen") || lower.includes("material") || lower.includes("equipo")) return "almacen";
+      return "";
+    }
+
+    async function parseDataFile(fileOrBlob, filename) {
+      const lower = filename.toLowerCase();
+      if (lower.endsWith(".csv")) {
+        return parseCsvText(await fileOrBlob.text()).map(normalizeRow);
+      }
+      const workbook = XLSX.read(await fileOrBlob.arrayBuffer(), { type: "array", cellDates: true });
+      const sheetName = workbook.SheetNames.includes("Sheet1") ? "Sheet1" : workbook.SheetNames[0];
+      return XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" }).map(normalizeRow);
+    }
+
+    function parseCsvText(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"' && inQuotes && next === '"') {
+          cell += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          row.push(cell);
+          cell = "";
+        } else if ((char === "\n" || char === "\r") && !inQuotes) {
+          if (char === "\r" && next === "\n") i++;
+          row.push(cell);
+          if (row.some(value => value !== "")) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += char;
         }
+      }
 
-        // Close config Modal
-        function closeConfigModal() {
-            document.getElementById('configModalOverlay').classList.remove('active');
+      if (cell || row.length) {
+        row.push(cell);
+        if (row.some(value => value !== "")) rows.push(row);
+      }
+
+      const headers = (rows.shift() || []).map(header => header.trim());
+      return rows.map(values => {
+        const out = {};
+        headers.forEach((header, index) => {
+          out[header] = values[index] === undefined ? "" : values[index].trim();
+        });
+        return out;
+      });
+    }
+
+    function normalizeRow(row) {
+      const out = {};
+      for (const [key, value] of Object.entries(row)) {
+        const cleanKey = String(key).trim().replace(/^["']|["']$/g, '');
+        out[cleanKey] = value instanceof Date ? toDateInputValue(value) : value;
+      }
+
+      // Auto-normalize WBS identifiers based on the user's corrected Excel format
+      if (out.nivel_wbs !== undefined) {
+        const level = Number(out.nivel_wbs);
+        if (level === 1) {
+          out.id_wbs = String(out.edt_id || "").trim();
+          out.nombre_actividad = String(out.edt_nombre || "").trim();
+        } else if (level === 2) {
+          out.id_wbs = String(out.actividad_id || "").trim();
+          out.nombre_actividad = String(out.actividad_nombre || "").trim();
         }
+      }
+      return out;
+    }
 
-        // Save Webhook config
-        function saveWebhookConfig() {
-            const val = document.getElementById('webhookUrlInput').value.trim();
-            webhookUrl = val;
-            localStorage.setItem('google_sheet_webhook_url', val);
-            closeConfigModal();
-            updateOnlineStatus();
-            alert("URL de Google Apps Script guardada correctamente.");
+    function renderBadges() {
+      const labels = { edt: "EDT", pv: "Metrados", rrhh: "RRHH", almacen: "Almacén" };
+      $("#dataBadges").innerHTML = Object.entries(labels).map(([key, label]) => {
+        const ok = Array.isArray(state.masters[key]) && state.masters[key].length > 0;
+        return `<span class="rounded-full px-2 py-1 text-[11px] font-extrabold ${ok ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}">${label}</span>`;
+      }).join("");
+    }
+
+    function addActivityRow(data = {}) {
+      const node = $("#activityTemplate").content.firstElementChild.cloneNode(true);
+      $("#activitiesList").appendChild(node);
+
+      const activitySelect = $(".activity-select", node);
+      const globalChapterVal = $("#globalChapter").value;
+
+      if (!globalChapterVal) {
+        activitySelect.innerHTML = `<option value="">Seleccione el Capítulo en la cabecera primero</option>`;
+        activitySelect.disabled = true;
+      } else {
+        activitySelect.disabled = false;
+        fillActivitySelectFiltered(activitySelect, globalChapterVal, data.id_wbs);
+      }
+
+      activitySelect.addEventListener("change", () => {
+        updateActivityRow(node);
+        queueDraftSave();
+      });
+
+      $(".qty", node).addEventListener("input", () => {
+        updateActivityRow(node);
+        queueDraftSave();
+      });
+
+      $(".delete-btn", node).addEventListener("click", () => {
+        node.remove();
+        validateResourceSections();
+        updateProgress();
+        queueDraftSave();
+      });
+
+      $(".qty", node).value = data.cantidad_ejecutada || "";
+      $(".obs", node).value = data.observacion || "";
+
+      updateActivityRow(node);
+      updateProgress();
+    }
+
+    function addResourceRow(kind, data = {}) {
+      const node = $("#resourceTemplate").content.firstElementChild.cloneNode(true);
+      node.dataset.resourceKind = kind;
+      const label = { labor: "Personal", material: "Material", equipment: "Equipo" }[kind];
+      $(".resource-label", node).textContent = label;
+      
+      const target = kind === "labor" ? "#laborList" : kind === "material" ? "#materialsList" : "#equipmentList";
+      $(target).appendChild(node);
+      
+      const select = $(".resource-select", node);
+      fillResourceSelect(select, kind, data.id_recurso);
+      
+      const updateUnitIndicator = () => {
+        const id = select.value;
+        const master = kind === "labor" ? state.masters.rrhh : state.masters.almacen;
+        const resource = master.find(item => String(item.id_recurso) === String(id)) || {};
+        $(".unit-indicator", node).value = resource.unidad || (kind === "labor" ? "H-H" : "—");
+      };
+      
+      select.addEventListener("change", () => {
+        updateUnitIndicator();
+        updateProgress();
+        queueDraftSave();
+      });
+      
+      $(".qty", node).value = data.cantidad || "";
+      $(".qty", node).addEventListener("input", () => {
+        updateProgress();
+        queueDraftSave();
+      });
+      
+      $(".delete-btn", node).addEventListener("click", () => {
+        node.remove();
+        updateProgress();
+        queueDraftSave();
+      });
+      
+      updateUnitIndicator();
+      validateResourceSections();
+      updateProgress();
+    }
+
+    function fillActivitySelectFiltered(select, chapterId, selected = "") {
+      const date = $("#fecha").value;
+      const allActivities = getActivitiesForDate(date);
+      // Filter activities belonging to this chapter
+      const filtered = allActivities.filter(r => {
+        const parentId = r.padre_id || r.edt_id || String(r.id_wbs).split(".")[0] + ".0";
+        return String(parentId) === String(chapterId);
+      });
+
+      select.innerHTML = `<option value="">Seleccione actividad</option>` + filtered.map(row => {
+        const id = safe(row.id_wbs);
+        const label = `${id} ${safe(row.nombre_actividad)} — Unidad: ${safe(row.unidad)}`;
+        return `<option value="${escapeAttr(id)}" ${String(selected) === String(id) ? "selected" : ""}>${label}</option>`;
+      }).join("");
+    }
+
+    function fillResourceSelect(select, kind, selected = "") {
+      let rows = [];
+      if (kind === "labor") rows = state.masters.rrhh;
+      if (kind === "material") rows = state.masters.almacen.filter(r => String(r.tipo).toLowerCase() === "material");
+      if (kind === "equipment") rows = state.masters.almacen.filter(r => String(r.tipo).toLowerCase() === "equipo");
+      select.innerHTML = `<option value="">Seleccione recurso</option>` + rows.map(row => {
+        const id = safe(row.id_recurso);
+        const desc = safe(row.descripcion);
+        const detail = kind === "labor" ? safe(row.categoria) : safe(row.tipo);
+        const unit = safe(row.unidad || (kind === "labor" ? "H-H" : ""));
+        const unitSuffix = unit ? ` [${unit}]` : "";
+        return `<option value="${escapeAttr(id)}" ${String(selected) === String(id) ? "selected" : ""}>${id} ${desc} (${detail})${unitSuffix}</option>`;
+      }).join("");
+    }
+
+    function refreshAllSelects() {
+      // Populate globalChapter select in header
+      const globalChapterSelect = $("#globalChapter");
+      if (globalChapterSelect) {
+        const currentGlobalVal = globalChapterSelect.value;
+        const chapters = state.masters.edt.filter(row => Number(row.nivel_wbs) === 1);
+        globalChapterSelect.innerHTML = `<option value="">Seleccione el Capítulo para este Reporte</option>` + chapters.map(ch => {
+          return `<option value="${escapeAttr(ch.id_wbs)}" ${String(currentGlobalVal) === String(ch.id_wbs) ? "selected" : ""}>${ch.id_wbs} ${safe(ch.nombre_actividad || ch.actividad_nombre)}</option>`;
+        }).join("");
+      }
+
+      refreshActivityOptions();
+      $$("#laborList .row-card").forEach(row => fillResourceSelect($(".resource-select", row), "labor", $(".resource-select", row).value));
+      $$("#materialsList .row-card").forEach(row => fillResourceSelect($(".resource-select", row), "material", $(".resource-select", row).value));
+      $$("#equipmentList .row-card").forEach(row => fillResourceSelect($(".resource-select", row), "equipment", $(".resource-select", row).value));
+    }
+
+    function refreshActivityOptions() {
+      const globalChapterVal = $("#globalChapter").value;
+      $$("#activitiesList .row-card").forEach(row => {
+        const activitySelect = $(".activity-select", row);
+        const currentActivity = activitySelect.value;
+
+        if (globalChapterVal) {
+          activitySelect.disabled = false;
+          fillActivitySelectFiltered(activitySelect, globalChapterVal, currentActivity);
+        } else {
+          activitySelect.innerHTML = `<option value="">Seleccione el Capítulo en la cabecera primero</option>`;
+          activitySelect.disabled = true;
         }
+      });
+    }
 
-        // 3. WEATHER PICKER
-        function initClimatePicker() {
-            const picker = document.getElementById('climatePicker');
-            const hiddenInput = document.getElementById('weatherState');
-            const options = picker.querySelectorAll('.climate-option');
+    function updateAllActivityRows() {
+      $$("#activitiesList .row-card").forEach(updateActivityRow);
+    }
 
-            options.forEach(opt => {
-                opt.addEventListener('click', () => {
-                    options.forEach(o => o.classList.remove('active'));
-                    opt.classList.add('active');
-                    hiddenInput.value = opt.getAttribute('data-weather');
-                });
-            });
+    function updateActivityRow(row) {
+      const id = $(".activity-select", row).value;
+      const qty = Number($(".qty", row).value || 0);
+      const total = getActivityMetradoTotal(id);
+      const meta = getPvMeta(id, $("#fecha").value);
+      $(".meta-dia", row).value = meta === "" ? "—" : meta;
+      $(".avance", row).value = total > 0 ? `${((qty / total) * 100).toFixed(2)}%` : "0%";
+      $(".warning", row).classList.toggle("hidden", !(total > 0 && qty > total));
+    }
+
+    function validateResourceSections() {
+      const globalChapterSelect = $("#globalChapter");
+      if (globalChapterSelect) {
+        const hasRows = $$(".row-card").length > 0;
+        globalChapterSelect.classList.toggle("border-red-500", hasRows && !globalChapterSelect.value);
+      }
+    }
+
+    function validateSoft() {
+      const today = toDateInputValue(new Date());
+      const future = $("#fecha").value > today;
+      $("#fecha").classList.toggle("border-amber-500", future);
+      $("#fechaWarning").classList.toggle("hidden", !future);
+      $$("#activitiesList .row-card").forEach(updateActivityRow);
+      validateResourceSections();
+    }
+
+    function getActivitiesForDate(date) {
+      // Retornar todas las actividades del catálogo para permitir reportar retrasos o trabajos adelantados
+      return getSelectableActivities();
+    }
+
+    function getSelectableActivities() {
+      return state.masters.edt.filter(row => {
+        const isLeaf = Number(row.nivel_wbs) === 2;
+        const hasBudget = Number(row.presupuesto_total || 0) > 0;
+        return isLeaf && hasBudget;
+      });
+    }
+
+    function getEdtCostCodes() {
+      return state.masters.edt.filter(row => {
+        const id = String(row.id_wbs || "").trim();
+        return id && id !== "0" && Number(row.nivel_wbs) === 1;
+      });
+    }
+
+    function getPvMeta(idWbs, date) {
+      if (!CONFIG.ENABLE_PV_META || !idWbs || !date) return "";
+      const row = state.masters.pv.find(item => String(item.id_wbs) === String(idWbs) && normalizeDateString(item.fecha) === date);
+      return row ? row.metrado_diario_planificado : "";
+    }
+
+    function getActivityMetradoTotal(idWbs) {
+      if (!idWbs) return 0;
+      const pvRows = state.masters.pv.filter(item => String(item.id_wbs) === String(idWbs));
+      return Math.max(0, ...pvRows.map(item => Number(item.metrado_acumulado_planificado || 0)));
+    }
+
+    function collectPayload() {
+      const payload = {
+        report_type: $("#reportType")?.value || "production",
+        fecha: $("#fecha").value,
+        responsable: $("#responsable").value.trim(),
+        turno: $("#turno").value,
+        clima_manana: $("#clima_manana").value,
+        clima_tarde: $("#clima_tarde").value,
+        horas_efectivas: Number($("#horas_efectivas").value || 0),
+        personal_total: Number($("#personal_total").value || 0),
+        accidentes: $("#accidentes").value.trim(),
+        inspecciones_seguridad: $("#inspecciones_seguridad").checked,
+        detalle_inspecciones: $("#detalle_inspecciones").value.trim(),
+        conflictos: $("#conflictos").value.trim(),
+        trabajos_siguiente_dia: $("#trabajos_siguiente_dia").value.trim(),
+        observaciones: $("#observaciones").value.trim(),
+        global_edt: getSelectedEdt("#globalChapter"),
+        actividades: collectActivities(),
+        mano_obra: collectResources("#laborList", "labor", "#globalChapter"),
+        materiales: collectResources("#materialsList", "material", "#globalChapter"),
+        equipos: collectResources("#equipmentList", "equipment", "#globalChapter")
+      };
+      return payload;
+    }
+
+    function collectActivities() {
+      return $$("#activitiesList .row-card").map(row => {
+        const id = $(".activity-select", row).value;
+        const activity = state.masters.edt.find(item => String(item.id_wbs) === String(id)) || {};
+        return {
+          id_wbs: id,
+          nombre: activity.nombre_actividad || "",
+          unidad: activity.unidad || "",
+          meta_dia: $(".meta-dia", row).value,
+          cantidad_ejecutada: Number($(".qty", row).value || 0),
+          avance_estimado: $(".avance", row).value,
+          observacion: $(".obs", row).value.trim()
+        };
+      }).filter(row => row.id_wbs || row.cantidad_ejecutada || row.observacion);
+    }
+
+    function collectResources(selector, kind, edtSelector) {
+      const selectedEdt = getSelectedEdt(edtSelector);
+      return $$(`${selector} .row-card`).map(row => {
+        const id = $(".resource-select", row).value;
+        const master = kind === "labor" ? state.masters.rrhh : state.masters.almacen;
+        const resource = master.find(item => String(item.id_recurso) === String(id)) || {};
+        return {
+          edt_id: selectedEdt.id_wbs,
+          edt_nombre: selectedEdt.nombre_actividad,
+          id_recurso: id,
+          descripcion: resource.descripcion || "",
+          categoria: resource.categoria || "",
+          tipo: resource.tipo || "",
+          unidad: resource.unidad || "",
+          cantidad: Number($(".qty", row).value || 0),
+          wbs: selectedEdt.id_wbs
+        };
+      }).filter(row => row.id_recurso || row.cantidad || row.wbs);
+    }
+
+    function getSelectedEdt(selector) {
+      const id = $(selector)?.value || "";
+      return state.masters.edt.find(row => String(row.id_wbs) === String(id)) || { id_wbs: id, nombre_actividad: "" };
+    }
+
+    function saveDraft() {
+      const payload = collectPayload();
+      localStorage.setItem(STORAGE_KEYS.draft, JSON.stringify(payload));
+      saveResponsible(payload.responsable);
+    }
+
+    function saveDraftSilently() {
+      saveDraft();
+    }
+
+    function queueDraftSave() {
+      clearTimeout(state.savingTimer);
+      state.savingTimer = setTimeout(saveDraftSilently, 500);
+    }
+
+    function setReportType(type) {
+      const isProd = type === "production";
+      const reportTypeInput = $("#reportType");
+      if (reportTypeInput) {
+        reportTypeInput.value = type;
+      }
+      
+      const btnProd = $("#btnTypeProd");
+      const btnSafety = $("#btnTypeSafety");
+      
+      if (btnProd && btnSafety) {
+        if (isProd) {
+          btnProd.className = "rounded-lg py-2.5 text-sm font-extrabold text-center transition-all bg-blue-600 text-white shadow-sm";
+          btnSafety.className = "rounded-lg py-2.5 text-sm font-extrabold text-center transition-all text-slate-600 hover:bg-slate-200/50";
+        } else {
+          btnProd.className = "rounded-lg py-2.5 text-sm font-extrabold text-center transition-all text-slate-600 hover:bg-slate-200/50";
+          btnSafety.className = "rounded-lg py-2.5 text-sm font-extrabold text-center transition-all bg-emerald-600 text-white shadow-sm";
         }
+      }
+      
+      const chContainer = $("#globalChapterContainer");
+      if (chContainer) {
+        chContainer.classList.toggle("hidden", !isProd);
+      }
+      const globalChapterSelect = $("#globalChapter");
+      if (globalChapterSelect) {
+        globalChapterSelect.required = isProd;
+      }
+      
+      const toggleClass = (id, hidden) => {
+        const el = $(id);
+        if (el) el.classList.toggle("hidden", hidden);
+      };
+      
+      toggleClass("#activitiesAccordion", !isProd);
+      toggleClass("#laborAccordion", !isProd);
+      toggleClass("#materialsAccordion", !isProd);
+      toggleClass("#equipmentAccordion", !isProd);
+      toggleClass("#issuesAccordion", !isProd);
+      
+      toggleClass("#safetyAccordion", isProd);
+      
+      if (!isProd) {
+        const safetyBody = $("#safetyAccordion .accordion-body");
+        if (safetyBody) safetyBody.classList.remove("hidden");
+        const safetyIcon = $("#safetyAccordion .fa-chevron-down");
+        if (safetyIcon) safetyIcon.classList.add("rotate-180");
+      }
+      
+      updateProgress();
+      queueDraftSave();
+    }
 
-        // 4. PERSONNEL COUNTERS
-        function incrementCounter(type) {
-            counters[type]++;
-            document.getElementById(`cnt-${type}`).innerText = counters[type];
+    function loadDraft() {
+      const raw = localStorage.getItem(STORAGE_KEYS.draft);
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        setValue("fecha", data.fecha);
+        setValue("responsable", data.responsable);
+        setValue("turno", data.turno);
+        setValue("clima_manana", data.clima_manana);
+        setValue("clima_tarde", data.clima_tarde);
+        setValue("horas_efectivas", data.horas_efectivas);
+        setValue("personal_total", data.personal_total);
+        setValue("accidentes", data.accidentes);
+        $("#inspecciones_seguridad").checked = Boolean(data.inspecciones_seguridad);
+        setValue("detalle_inspecciones", data.detalle_inspecciones);
+        setValue("conflictos", data.conflictos);
+        setValue("trabajos_siguiente_dia", data.trabajos_siguiente_dia);
+        setValue("observaciones", data.observaciones);
+        
+        setReportType(data.report_type || "production");
+        setValue("globalChapter", data.global_edt?.id_wbs || data.mano_obra?.[0]?.edt_id || data.mano_obra?.[0]?.wbs || "");
+        
+        // Populate activities and resources
+        (data.actividades || []).forEach(addActivityRow);
+        (data.mano_obra || []).forEach(item => addResourceRow("labor", item));
+        (data.materiales || []).forEach(item => addResourceRow("material", item));
+        (data.equipos || []).forEach(item => addResourceRow("equipment", item));
+      } catch (error) {
+        localStorage.removeItem(STORAGE_KEYS.draft);
+      }
+    }
+
+    function downloadReportXlsx() {
+      const payload = collectPayload();
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{
+        fecha: payload.fecha,
+        responsable: payload.responsable,
+        turno: payload.turno,
+        clima_manana: payload.clima_manana,
+        clima_tarde: payload.clima_tarde,
+        horas_efectivas: payload.horas_efectivas,
+        personal_total: payload.personal_total,
+        accidentes: payload.accidentes,
+        inspecciones_seguridad: payload.inspecciones_seguridad,
+        detalle_inspecciones: payload.detalle_inspecciones,
+        conflictos: payload.conflictos,
+        trabajos_siguiente_dia: payload.trabajos_siguiente_dia,
+        observaciones: payload.observaciones
+      }]), "Cabecera");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(payload.actividades), "Actividades");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([
+        ...payload.mano_obra.map(r => ({ tipo: "mano_obra", ...r })),
+        ...payload.materiales.map(r => ({ tipo: "material", ...r })),
+        ...payload.equipos.map(r => ({ tipo: "equipo", ...r }))
+      ]), "Recursos");
+      XLSX.writeFile(wb, `RDO_${payload.fecha || "sin_fecha"}.xlsx`);
+      showToast("Reporte XLSX generado.", "ok");
+    }
+
+    async function sendToGoogleSheets() {
+      const payload = collectPayload();
+      if (CONFIG.GAS_WEBAPP_URL.includes("...")) {
+        showToast("Configure CONFIG.GAS_WEBAPP_URL antes de enviar.", "error");
+        return;
+      }
+      $("#spinner").classList.remove("hidden");
+      $("#spinner").classList.add("grid");
+      try {
+        await fetch(CONFIG.GAS_WEBAPP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        localStorage.removeItem(STORAGE_KEYS.draft);
+        saveResponsible(payload.responsable);
+        resetForm();
+        showToast("Reporte enviado correctamente.", "ok");
+      } catch (error) {
+        showToast("No se pudo enviar a Google Sheets.", "error");
+      } finally {
+        $("#spinner").classList.add("hidden");
+        $("#spinner").classList.remove("grid");
+      }
+    }
+
+    function clearForm() {
+      if (!confirm("¿Desea limpiar todo el formulario y borrar el borrador local?")) return;
+      localStorage.removeItem(STORAGE_KEYS.draft);
+      resetForm();
+      showToast("Formulario limpio.", "ok");
+    }
+
+    function resetForm() {
+       ["globalChapter", "responsable", "horas_efectivas", "personal_total", "accidentes", "detalle_inspecciones", "conflictos", "trabajos_siguiente_dia", "observaciones"].forEach(id => setValue(id, ""));
+       $("#fecha").valueAsDate = new Date();
+       $("#turno").value = "Mañana";
+       $("#clima_manana").value = "Soleado";
+       $("#clima_tarde").value = "Soleado";
+       $("#inspecciones_seguridad").checked = false;
+       $("#activitiesList").innerHTML = "";
+       $("#laborList").innerHTML = "";
+       $("#materialsList").innerHTML = "";
+       $("#equipmentList").innerHTML = "";
+       
+       setReportType("production");
+       addActivityRow();
+       updateProgress();
+     }
+
+     function updateProgress() {
+       const isProd = $("#reportType")?.value === "production";
+       let fields = [];
+       if (isProd) {
+         fields = [
+           $("#globalChapter")?.value,
+           $("#fecha").value,
+           $("#responsable").value,
+           $("#turno").value,
+           $("#horas_efectivas").value,
+           collectActivities().length,
+           collectResources("#laborList", "labor", "#globalChapter").length,
+           $("#conflictos").value || $("#trabajos_siguiente_dia").value || $("#observaciones").value
+         ];
+       } else {
+         fields = [
+           $("#fecha").value,
+           $("#responsable").value,
+           $("#turno").value,
+           $("#personal_total").value,
+           $("#accidentes").value || $("#detalle_inspecciones").value || $("#observaciones").value
+         ];
+       }
+       const completed = fields.filter(Boolean).length;
+       $("#progressBar").style.width = `${Math.round((completed / fields.length) * 100)}%`;
+     }
+
+    function saveMastersToStorage() {
+      localStorage.setItem(STORAGE_KEYS.edt, JSON.stringify(state.masters.edt));
+      localStorage.setItem(STORAGE_KEYS.pv, JSON.stringify(state.masters.pv));
+      localStorage.setItem(STORAGE_KEYS.rrhh, JSON.stringify(state.masters.rrhh));
+      localStorage.setItem(STORAGE_KEYS.almacen, JSON.stringify(state.masters.almacen));
+    }
+
+    function loadMastersFromStorage() {
+      for (const key of ["edt", "pv", "rrhh", "almacen"]) {
+        const raw = localStorage.getItem(STORAGE_KEYS[key]);
+        if (!raw) continue;
+        try {
+          state.masters[key] = JSON.parse(raw);
+        } catch (error) {
+          localStorage.removeItem(STORAGE_KEYS[key]);
         }
-
-        function decrementCounter(type) {
-            if (counters[type] > 0) {
-                counters[type]--;
-                document.getElementById(`cnt-${type}`).innerText = counters[type];
-            }
-        }
-
-        // 5. DYNAMIC TASKS LIST
-        function renderTasks() {
-            const container = document.getElementById('taskListContainer');
-            container.innerHTML = "";
-
-            initialTasks.forEach((task) => {
-                const card = document.createElement('div');
-                card.className = "dynamic-card";
-                card.id = `task-card-${task.id}`;
-                card.innerHTML = `
-                    <div class="dynamic-card-header">
-                        <span class="dynamic-card-title">Tarea #${task.id}</span>
-                        <button type="button" class="remove-card-btn" onclick="removeTask(${task.id})">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                    <div class="form-group">
-                        <label>Descripción del Trabajo</label>
-                        <input type="text" class="form-control no-icon task-desc-input" value="${task.description}" placeholder="Ej. Habilitación de vigas..." style="padding: 8px 10px; font-size: 0.8rem;" oninput="updateTaskText(${task.id}, this.value)">
-                    </div>
-                    <div class="progress-slider-container">
-                        <div class="slider-header">
-                            <span>Avance Logrado</span>
-                            <span class="slider-value" id="val-task-${task.id}">${task.progress}%</span>
-                        </div>
-                        <div class="slider-bar-wrapper">
-                            <input type="range" class="progress-slider task-progress-slider" min="0" max="100" step="5" value="${task.progress}" oninput="updateTaskProgress(${task.id}, this.value)">
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function addNewTask() {
-            const newId = initialTasks.length > 0 ? Math.max(...initialTasks.map(t => t.id)) + 1 : 1;
-            initialTasks.push({
-                id: newId,
-                description: "",
-                progress: 0
-            });
-            renderTasks();
-            updateGlobalProgress();
-            
-            // Auto scroll down to let them see the added task
-            setTimeout(() => {
-                const el = document.getElementById(`task-card-${newId}`);
-                if(el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        }
-
-        function removeTask(id) {
-            initialTasks = initialTasks.filter(t => t.id !== id);
-            renderTasks();
-            updateGlobalProgress();
-        }
-
-        function updateTaskProgress(id, value) {
-            const task = initialTasks.find(t => t.id === id);
-            if (task) {
-                task.progress = parseInt(value);
-                document.getElementById(`val-task-${id}`).innerText = `${value}%`;
-                updateGlobalProgress();
-            }
-        }
-
-        function updateTaskText(id, text) {
-            const task = initialTasks.find(t => t.id === id);
-            if (task) {
-                task.description = text;
-            }
-        }
-
-        function updateGlobalProgress() {
-            if (initialTasks.length === 0) {
-                document.getElementById('globalProgressPercent').innerText = "0%";
-                document.getElementById('globalProgressBar').style.width = "0%";
-                return;
-            }
-            const total = initialTasks.reduce((acc, t) => acc + t.progress, 0);
-            const avg = Math.round(total / initialTasks.length);
-            
-            document.getElementById('globalProgressPercent').innerText = `${avg}%`;
-            document.getElementById('globalProgressBar').style.width = `${avg}%`;
-        }
-
-        // 6. RECEPCION DE MATERIALES
-        function renderMaterials() {
-            const container = document.getElementById('materialListContainer');
-            container.innerHTML = "";
-
-            if (initialMaterials.length === 0) {
-                container.innerHTML = `<p style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:12px; border: 1.5px dashed var(--border-color); border-radius:10px;">Ningún material registrado hoy.</p>`;
-                return;
-            }
-
-            initialMaterials.forEach((mat) => {
-                const card = document.createElement('div');
-                card.className = "dynamic-card";
-                card.id = `material-card-${mat.id}`;
-                card.innerHTML = `
-                    <div class="dynamic-card-header">
-                        <span class="dynamic-card-title" style="color: var(--text-main);">Detalle de Recepción</span>
-                        <button type="button" class="remove-card-btn" onclick="removeMaterial(${mat.id})">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 8px;">
-                        <label>Material recibido</label>
-                        <input type="text" class="form-control no-icon" value="${mat.description}" placeholder="Nombre del material" style="padding: 8px 10px; font-size: 0.8rem;" oninput="updateMaterialText(${mat.id}, 'description', this.value)">
-                    </div>
-                    <div class="form-row-2">
-                        <div class="form-group">
-                            <label>Cantidad</label>
-                            <input type="number" class="form-control no-icon" value="${mat.quantity}" placeholder="Ej. 10" style="padding: 8px 10px; font-size: 0.8rem;" oninput="updateMaterialText(${mat.id}, 'quantity', this.value)">
-                        </div>
-                        <div class="form-group">
-                            <label>Unidad</label>
-                            <input type="text" class="form-control no-icon" value="${mat.unit}" placeholder="Bolsas, m3, varillas..." style="padding: 8px 10px; font-size: 0.8rem;" oninput="updateMaterialText(${mat.id}, 'unit', this.value)">
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function addNewMaterial() {
-            const newId = initialMaterials.length > 0 ? Math.max(...initialMaterials.map(m => m.id)) + 1 : 1;
-            initialMaterials.push({
-                id: newId,
-                description: "",
-                quantity: 0,
-                unit: ""
-            });
-            renderMaterials();
-            
-            setTimeout(() => {
-                const el = document.getElementById(`material-card-${newId}`);
-                if(el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        }
-
-        function removeMaterial(id) {
-            initialMaterials = initialMaterials.filter(m => m.id !== id);
-            renderMaterials();
-        }
-
-        function updateMaterialText(id, field, value) {
-            const mat = initialMaterials.find(m => m.id === id);
-            if (mat) {
-                if (field === 'quantity') {
-                    mat[field] = parseFloat(value) || 0;
-                } else {
-                    mat[field] = value;
-                }
-            }
-        }
-
-        // 7. SIGNATURE CANVAS DRAWING LOGIC
-        function initSignatureCanvas() {
-            canvas = document.getElementById('sigCanvas');
-            ctx = canvas.getContext('2d');
-
-            // Responsive sizing helper
-            function resizeCanvas() {
-                const rect = canvas.parentElement.getBoundingClientRect();
-                canvas.width = rect.width;
-                canvas.height = 120;
-                
-                ctx.strokeStyle = "#1E293B";
-                ctx.lineWidth = 2.5;
-                ctx.lineCap = "round";
-            }
-
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            // Desktop Mouse controls
-            canvas.addEventListener('mousedown', (e) => {
-                isDrawing = true;
-                const pos = getPos(e);
-                ctx.beginPath();
-                ctx.moveTo(pos.x, pos.y);
-            });
-
-            canvas.addEventListener('mousemove', (e) => {
-                if (!isDrawing) return;
-                const pos = getPos(e);
-                ctx.lineTo(pos.x, pos.y);
-                ctx.stroke();
-            });
-
-            canvas.addEventListener('mouseup', () => isDrawing = false);
-            canvas.addEventListener('mouseleave', () => isDrawing = false);
-
-            // Mobile touch controls
-            canvas.addEventListener('touchstart', (e) => {
-                isDrawing = true;
-                const touch = e.touches[0];
-                const pos = getPos(touch);
-                ctx.beginPath();
-                ctx.moveTo(pos.x, pos.y);
-                e.preventDefault();
-            });
-
-            canvas.addEventListener('touchmove', (e) => {
-                if (!isDrawing) return;
-                const touch = e.touches[0];
-                const pos = getPos(touch);
-                ctx.lineTo(pos.x, pos.y);
-                ctx.stroke();
-                e.preventDefault();
-            }, { passive: false });
-
-            canvas.addEventListener('touchend', () => isDrawing = false);
-
-            function getPos(evt) {
-                const rect = canvas.getBoundingClientRect();
-                return {
-                    x: evt.clientX - rect.left,
-                    y: evt.clientY - rect.top
-                };
-            }
-        }
-
-        function clearSignatureCanvas() {
-            if (ctx && canvas) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-        }
-
-        // 8. TABS CONTROLLER
-        function initTabs() {
-            const tabs = document.querySelectorAll('.nav-tab');
-            const sections = document.querySelectorAll('.form-section');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    sections.forEach(s => s.classList.remove('active'));
-
-                    tab.classList.add('active');
-                    const targetId = tab.getAttribute('data-target');
-                    document.getElementById(targetId).classList.add('active');
-
-                    // Scroll to the top of container
-                    document.getElementById('formScrollContainer').scrollTop = 0;
-
-                    // A quick redraw canvas if signature tab is shown (since display blocks can break canvas sizes)
-                    if (targetId === 'sec-entregas') {
-                        setTimeout(() => {
-                            const rect = canvas.parentElement.getBoundingClientRect();
-                            if(canvas.width !== rect.width) {
-                                const tempCanvas = document.createElement('canvas');
-                                tempCanvas.width = canvas.width;
-                                tempCanvas.height = canvas.height;
-                                const tempCtx = tempCanvas.getContext('2d');
-                                tempCtx.drawImage(canvas, 0, 0);
-
-                                canvas.width = rect.width;
-                                ctx.drawImage(tempCanvas, 0, 0);
-                                ctx.strokeStyle = "#1E293B";
-                                ctx.lineWidth = 2.5;
-                                ctx.lineCap = "round";
-                            }
-                        }, 50);
-                    }
-                });
-            });
-        }
-
-        // 9. PHOTO HANDLING SYSTEM
-        function handlePhotoUpload(event) {
-            const files = event.target.files;
-            if (activePhotos.length + files.length > 3) {
-                alert("Puedes adjuntar un máximo de 3 fotos de evidencia.");
-                return;
-            }
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    const base64Data = e.target.result;
-                    const photoId = Date.now() + Math.random();
-
-                    activePhotos.push({
-                        id: photoId,
-                        fileName: file.name,
-                        base64: base64Data
-                    });
-
-                    renderPhotoPreviews();
-                }
-
-                reader.readAsDataURL(file);
-            }
-            event.target.value = '';
-        }
-
-        function renderPhotoPreviews() {
-            const container = document.getElementById('photoPreviewContainer');
-            container.innerHTML = '';
-
-            activePhotos.forEach((photo) => {
-                const item = document.createElement('div');
-                item.className = "photo-preview-item";
-                item.innerHTML = `
-                    <img src="${photo.base64}" alt="Evidencia">
-                    <button type="button" class="photo-preview-remove" onclick="removePhoto(${photo.id})">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function removePhoto(id) {
-            activePhotos = activePhotos.filter(p => p.id !== id);
-            renderPhotoPreviews();
-        }
-
-        // 10. SUBMISSION SYSTEM & OFFLINE CAPABILITY
-        let lastGeneratedReportData = null;
-
-        function submitDailyReport() {
-            // Validation
-            const dateVal = document.getElementById('reportDate').value;
-            const responsibleVal = document.getElementById('inspectorName').value.trim();
-            const projectVal = document.getElementById('projectName').value.trim();
-
-            if (!dateVal || !responsibleVal || !projectVal) {
-                document.querySelector('.nav-tab[data-target="sec-general"]').click();
-                setTimeout(() => {
-                    document.getElementById('dailyReportForm').reportValidity();
-                }, 150);
-                return;
-            }
-
-            // Capture Signature (base64)
-            const isCanvasBlank = checkCanvasBlank(canvas);
-            const signatureBase64 = isCanvasBlank ? "" : canvas.toDataURL();
-
-            // Build Payload
-            const total = initialTasks.reduce((acc, t) => acc + t.progress, 0);
-            const avg = initialTasks.length > 0 ? Math.round(total / initialTasks.length) : 0;
-
-            const reportData = {
-                fecha: dateVal,
-                responsable: responsibleVal,
-                proyecto: projectVal,
-                clima: document.getElementById('weatherState').value,
-                personal: { ...counters },
-                jornada: {
-                    inicio: document.getElementById('hoursStart').value,
-                    fin: document.getElementById('hoursEnd').value
-                },
-                tareas: initialTasks.map(t => ({ tarea: t.description, avance: t.progress })),
-                avanceGlobal: avg,
-                materiales: initialMaterials.map(m => ({ material: m.description, cant: m.quantity, un: m.unit })),
-                incidentes: document.getElementById('incidentsText').value.trim(),
-                observaciones: document.getElementById('observationsText').value.trim(),
-                fotos: activePhotos.map(p => p.base64.substring(0, 100) + "... (Evidencia Base64)"), 
-                firma: signatureBase64
-            };
-
-            lastGeneratedReportData = reportData;
-
-            // Check if running natively inside Google Sheets sandbox
-            const isGoogleSandbox = (typeof google !== 'undefined' && google.script && google.script.run);
-
-            const overlay = document.getElementById('successModalOverlay');
-            const titleEl = document.getElementById('modalTitle');
-            const textEl = document.getElementById('modalText');
-            const offlineOptions = document.getElementById('modalOfflineOptions');
-
-            if (isGoogleSandbox) {
-                // NATIVE GOOGLE SHEETS COUPLING
-                const btnSubmit = document.querySelector('.app-footer .btn-primary');
-                const btnHtmlOriginal = btnSubmit.innerHTML;
-                btnSubmit.disabled = true;
-                btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando...`;
-
-                google.script.run
-                    .withSuccessHandler(function() {
-                        btnSubmit.disabled = false;
-                        btnSubmit.innerHTML = btnHtmlOriginal;
-                        
-                        titleEl.innerText = "¡Reporte Sincronizado!";
-                        textEl.innerText = "Los datos del avance de obra han sido registrados directamente en tu Google Sheet sin APIs intermediarias.";
-                        offlineOptions.style.display = "none";
-                        overlay.classList.add('active');
-                        
-                        clearSignatureCanvas();
-                    })
-                    .withFailureHandler(function(err) {
-                        btnSubmit.disabled = false;
-                        btnSubmit.innerHTML = btnHtmlOriginal;
-                        
-                        titleEl.innerText = "Error en Google Sheets";
-                        textEl.innerText = "Hubo un problema al guardar en la hoja: " + err.message;
-                        offlineOptions.style.display = "flex";
-                        overlay.classList.add('active');
-                    })
-                    .registrarReporte(reportData);
-
-            } else if (webhookUrl && navigator.onLine) {
-                // Traditional API webhook / Apps Script Web App fetch direct
-                const btnSubmit = document.querySelector('.app-footer .btn-primary');
-                const btnHtmlOriginal = btnSubmit.innerHTML;
-                btnSubmit.disabled = true;
-                btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando...`;
-
-                fetch(webhookUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(reportData)
-                })
-                .then(() => {
-                    titleEl.innerText = "¡Reporte Sincronizado!";
-                    textEl.innerText = "Los datos del avance de obra de hoy han sido registrados con éxito en Google Sheets.";
-                    offlineOptions.style.display = "none";
-                    overlay.classList.add('active');
-                })
-                .catch(err => {
-                    console.error(err);
-                    titleEl.innerText = "Error de Conexión";
-                    textEl.innerText = "Hubo un error al intentar conectarse a Google Sheets. El reporte se guardó localmente.";
-                    offlineOptions.style.display = "flex";
-                    overlay.classList.add('active');
-                })
-                .finally(() => {
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerHTML = btnHtmlOriginal;
-                });
-
-            } else {
-                // Offline fallback or Webhook URL not set yet
-                titleEl.innerText = webhookUrl ? "Reporte Guardado Local" : "Reporte Guardado (Sin Vincular)";
-                textEl.innerText = webhookUrl 
-                    ? "Actualmente no tienes conexión a internet. Los datos están listos. Descarga la copia para evitar pérdidas."
-                    : "No has configurado la vinculación automática con Google Sheets. Hemos guardado el reporte localmente. Puedes descargar la copia ahora mismo:";
-                
-                offlineOptions.style.display = "flex";
-                overlay.classList.add('active');
-            }
-        }
-
-        function checkCanvasBlank(c) {
-            const blank = document.createElement('canvas');
-            blank.width = c.width;
-            blank.height = c.height;
-            return c.toDataURL() === blank.toDataURL();
-        }
-
-        function closeSuccessModal() {
-            document.getElementById('successModalOverlay').classList.remove('active');
-        }
-
-        // 11. DOWNLOAD BACKUPS (OFFLINE WORKFLOWS)
-        function downloadOfflineBackup(format) {
-            if (!lastGeneratedReportData) return;
-
-            const dateStr = lastGeneratedReportData.fecha;
-            let filename = `Reporte_Obra_${dateStr}`;
-            let mimeType = '';
-            let content = '';
-
-            if (format === 'json') {
-                content = JSON.stringify(lastGeneratedReportData, null, 4);
-                filename += ".json";
-                mimeType = "application/json";
-            } else if (format === 'csv') {
-                filename += ".csv";
-                mimeType = "text/csv;charset=utf-8;";
-
-                const tasksFlat = lastGeneratedReportData.tareas.map(t => `${t.tarea} (${t.avance}%)`).join(" | ");
-                const matFlat = lastGeneratedReportData.materiales.map(m => `${m.cant} ${m.un} de ${m.material}`).join(" | ");
-
-                const headers = [
-                    "Fecha", "Responsable", "Proyecto", "Clima", 
-                    "Capataz", "Operarios", "Oficiales", "Peones", "Subcontratos",
-                    "Horario", "Tareas Realizadas", "Avance Global %",
-                    "Materiales Recibidos", "Incidentes", "Observaciones"
-                ];
-
-                const values = [
-                    lastGeneratedReportData.fecha,
-                    lastGeneratedReportData.responsable,
-                    lastGeneratedReportData.proyecto,
-                    lastGeneratedReportData.clima,
-                    lastGeneratedReportData.personal.capataz,
-                    lastGeneratedReportData.personal.operario,
-                    lastGeneratedReportData.personal.oficial,
-                    lastGeneratedReportData.personal.peon,
-                    lastGeneratedReportData.personal.subcontrato,
-                    `"${lastGeneratedReportData.jornada.inicio} a ${lastGeneratedReportData.jornada.fin}"`,
-                    `"${tasksFlat}"`,
-                    `${lastGeneratedReportData.avanceGlobal}`,
-                    `"${matFlat}"`,
-                    `"${lastGeneratedReportData.incidentes.replace(/"/g, '""')}"`,
-                    `"${lastGeneratedReportData.observaciones.replace(/"/g, '""')}"`
-                ];
-
-                content = "\uFEFF" + headers.join(",") + "\n" + values.join(",");
-            }
-
-            const blob = new Blob([content], { type: mimeType });
-            const link = document.createElement("a");
-            
-            if (navigator.msSaveBlob) { 
-                navigator.msSaveBlob(blob, filename);
-            } else {
-                link.href = URL.createObjectURL(blob);
-                link.setAttribute("download", filename);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-    </script>
+      }
+    }
+
+    function saveResponsible(name) {
+      if (!name) return;
+      const list = JSON.parse(localStorage.getItem(STORAGE_KEYS.responsables) || "[]");
+      const next = [name, ...list.filter(item => item !== name)].slice(0, 12);
+      localStorage.setItem(STORAGE_KEYS.responsables, JSON.stringify(next));
+      renderResponsibleHistory();
+    }
+
+    function renderResponsibleHistory() {
+      const list = JSON.parse(localStorage.getItem(STORAGE_KEYS.responsables) || "[]");
+      $("#responsablesList").innerHTML = list.map(name => `<option value="${escapeAttr(name)}"></option>`).join("");
+    }
+
+    function showToast(message, type) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.className = `fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl px-4 py-3 text-sm font-bold text-white shadow-lg ${type === "error" ? "bg-red-700" : "bg-emerald-700"}`;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 2800);
+    }
+
+    function setValue(id, value) {
+      if (value !== undefined && value !== null) $(`#${id}`).value = value;
+    }
+
+    function normalizeDateString(value) {
+      if (!value) return "";
+      if (value instanceof Date) return toDateInputValue(value);
+      const text = String(value).trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+      const date = new Date(text);
+      return Number.isNaN(date.getTime()) ? "" : toDateInputValue(date);
+    }
+
+    function toDateInputValue(date) {
+      const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    function safe(value) {
+      return value === undefined || value === null ? "" : String(value);
+    }
+
+    function escapeAttr(value) {
+      return safe(value).replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+  </script>
 </body>
 </html>
