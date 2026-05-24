@@ -458,6 +458,61 @@
       ENABLE_PV_META: true
     };
 
+    const DEFAULT_MASTERS = {
+      edt: [
+        { id_wbs: "1.0", nivel_wbs: 1, nombre_actividad: "Obras Provisionales y Trabajos Preliminares" },
+        { id_wbs: "1.1", nivel_wbs: 2, nombre_actividad: "Limpieza de Terreno Manual", padre_id: "1.0", unidad: "m2", presupuesto_total: 500 },
+        { id_wbs: "1.2", nivel_wbs: 2, nombre_actividad: "Trazo, Niveles y Replanteo Preliminar", padre_id: "1.0", unidad: "m2", presupuesto_total: 350 },
+        { id_wbs: "1.3", nivel_wbs: 2, nombre_actividad: "Cartel de Obra 3.60m x 2.40m", padre_id: "1.0", unidad: "und", presupuesto_total: 1 },
+        
+        { id_wbs: "2.0", nivel_wbs: 1, nombre_actividad: "Movimiento de Tierras" },
+        { id_wbs: "2.1", nivel_wbs: 2, nombre_actividad: "Excavación Manual para Cimientos", padre_id: "2.0", unidad: "m3", presupuesto_total: 120 },
+        { id_wbs: "2.2", nivel_wbs: 2, nombre_actividad: "Relleno con Material Propio Compactado", padre_id: "2.0", unidad: "m3", presupuesto_total: 85 },
+        { id_wbs: "2.3", nivel_wbs: 2, nombre_actividad: "Eliminación de Material Excedente c/Equipo", padre_id: "2.0", unidad: "m3", presupuesto_total: 150 },
+        
+        { id_wbs: "3.0", nivel_wbs: 1, nombre_actividad: "Obras de Concreto Armado" },
+        { id_wbs: "3.1", nivel_wbs: 2, nombre_actividad: "Concreto en Columnas f'c=210 kg/cm2", padre_id: "3.0", unidad: "m3", presupuesto_total: 45 },
+        { id_wbs: "3.2", nivel_wbs: 2, nombre_actividad: "Encofrado y Desencofrado de Columnas", padre_id: "3.0", unidad: "m2", presupuesto_total: 180 },
+        { id_wbs: "3.3", nivel_wbs: 2, nombre_actividad: "Acero de Refuerzo Grado 60 en Columnas", padre_id: "3.0", unidad: "kg", presupuesto_total: 2450 },
+        
+        { id_wbs: "4.0", nivel_wbs: 1, nombre_actividad: "Muros y Tabiquería" },
+        { id_wbs: "4.1", nivel_wbs: 2, nombre_actividad: "Muro de Ladrillo King Kong de Arcilla", padre_id: "4.0", unidad: "m2", presupuesto_total: 320 }
+      ],
+      pv: [
+        { id_wbs: "1.1", fecha: "2026-05-24", metrado_diario_planificado: 50, metrado_acumulado_planificado: 500 },
+        { id_wbs: "1.2", fecha: "2026-05-24", metrado_diario_planificado: 35, metrado_acumulado_planificado: 350 },
+        { id_wbs: "1.3", fecha: "2026-05-24", metrado_diario_planificado: 1, metrado_acumulado_planificado: 1 },
+        { id_wbs: "2.1", fecha: "2026-05-24", metrado_diario_planificado: 12, metrado_acumulado_planificado: 120 },
+        { id_wbs: "2.2", fecha: "2026-05-24", metrado_diario_planificado: 8, metrado_acumulado_planificado: 85 },
+        { id_wbs: "2.3", fecha: "2026-05-24", metrado_diario_planificado: 15, metrado_acumulado_planificado: 150 },
+        { id_wbs: "3.1", fecha: "2026-05-24", metrado_diario_planificado: 4, metrado_acumulado_planificado: 45 },
+        { id_wbs: "3.2", fecha: "2026-05-24", metrado_diario_planificado: 15, metrado_acumulado_planificado: 180 },
+        { id_wbs: "3.3", fecha: "2026-05-24", metrado_diario_planificado: 220, metrado_acumulado_planificado: 2450 },
+        { id_wbs: "4.1", fecha: "2026-05-24", metrado_diario_planificado: 25, metrado_acumulado_planificado: 320 }
+      ],
+      rrhh: [
+        { id_recurso: "MO-01", descripcion: "Capataz de Obra", categoria: "Mano de Obra", unidad: "H-H" },
+        { id_recurso: "MO-02", descripcion: "Operario Civil", categoria: "Mano de Obra", unidad: "H-H" },
+        { id_recurso: "MO-03", descripcion: "Oficial Civil", categoria: "Mano de Obra", unidad: "H-H" },
+        { id_recurso: "MO-04", descripcion: "Peón de Obra", categoria: "Mano de Obra", unidad: "H-H" },
+        { id_recurso: "MO-05", descripcion: "Operador de Equipo Liviano", categoria: "Mano de Obra", unidad: "H-H" }
+      ],
+      almacen: [
+        { id_recurso: "MAT-01", descripcion: "Cemento Portland Tipo I (42.5 kg)", tipo: "Material", unidad: "bol" },
+        { id_recurso: "MAT-02", descripcion: "Arena Fina para Tarrajeo", tipo: "Material", unidad: "m3" },
+        { id_recurso: "MAT-03", descripcion: "Piedra Chancada de 1/2\"", tipo: "Material", unidad: "m3" },
+        { id_recurso: "MAT-04", descripcion: "Acero Corrugado Grado 60 3/8\"", tipo: "Material", unidad: "kg" },
+        { id_recurso: "MAT-05", descripcion: "Ladrillo Arcilla King Kong 18 Huecos", tipo: "Material", unidad: "und" },
+        { id_recurso: "MAT-06", descripcion: "Madera Tornillo para Encofrados", tipo: "Material", unidad: "p2" },
+        { id_recurso: "MAT-07", descripcion: "Clavos para Madera c/cabeza 3\"", tipo: "Material", unidad: "kg" },
+        { id_recurso: "MAT-08", descripcion: "Alambre Negro Recocido N° 16", tipo: "Material", unidad: "kg" },
+        { id_recurso: "EQ-01", descripcion: "Mezcladora de Concreto Trompo 9p3", tipo: "Equipo", unidad: "hm" },
+        { id_recurso: "EQ-02", descripcion: "Vibrador de Concreto a Gasolina 2\"", tipo: "Equipo", unidad: "hm" },
+        { id_recurso: "EQ-03", descripcion: "Compactadora Apisonadora (Canguro)", tipo: "Equipo", unidad: "hm" },
+        { id_recurso: "EQ-04", descripcion: "Herramientas Manuales (Palas, Picos)", tipo: "Equipo", unidad: "glg" }
+      ]
+    };
+
     const MASTER_FILES = {
       edt: "BD_EDT.xlsx",
       pv: "BD_Metrados_Planificados.xlsx",
@@ -490,14 +545,14 @@
       $("#fecha").valueAsDate = new Date();
       loadMastersFromStorage();
       setReportType("production");
+      wireEvents();
+      refreshAllSelects();
       loadDraft();
       renderResponsibleHistory();
       renderBadges();
-      wireEvents();
-      refreshAllSelects();
       if ($("#activitiesList").children.length === 0) addActivityRow();
       updateProgress();
-      autoLoadMasters();
+      // autoLoadMasters() is not run automatically on startup to avoid overwrite/error with missing files.
       setInterval(saveDraftSilently, 30000);
     }
 
@@ -556,21 +611,36 @@
 
     async function autoLoadMasters() {
       const loaded = {};
+      let anyLoaded = false;
       for (const [key, file] of Object.entries(MASTER_FILES)) {
         try {
           const response = await fetchMasterFile(file);
-          if (!response.ok) throw new Error("No disponible");
-          const blob = await response.blob();
-          state.masters[key] = await parseDataFile(blob, file);
-          loaded[key] = true;
+          if (response && response.ok) {
+            const blob = await response.blob();
+            state.masters[key] = await parseDataFile(blob, file);
+            loaded[key] = true;
+            anyLoaded = true;
+          } else {
+            loaded[key] = false;
+          }
         } catch (error) {
           loaded[key] = false;
         }
       }
-      saveMastersToStorage();
+      if (anyLoaded) {
+        saveMastersToStorage();
+        showToast("Bases de datos actualizadas desde archivos locales.", "ok");
+      } else {
+        // Fallback to defaults if empty
+        for (const key of ["edt", "pv", "rrhh", "almacen"]) {
+          if (!state.masters[key] || state.masters[key].length === 0) {
+            state.masters[key] = JSON.parse(JSON.stringify(DEFAULT_MASTERS[key]));
+          }
+        }
+        showToast("Usando datos de prueba internos (sin archivos externos).", "ok");
+      }
       renderBadges();
       refreshAllSelects();
-      if (Object.values(loaded).some(Boolean)) showToast("Bases de datos actualizadas.", "ok");
     }
 
     async function fetchMasterFile(file) {
@@ -894,8 +964,14 @@
     }
 
     function getPvMeta(idWbs, date) {
-      if (!CONFIG.ENABLE_PV_META || !idWbs || !date) return "";
-      const row = state.masters.pv.find(item => String(item.id_wbs) === String(idWbs) && normalizeDateString(item.fecha) === date);
+      if (!CONFIG.ENABLE_PV_META || !idWbs) return "";
+      let row;
+      if (date) {
+        row = state.masters.pv.find(item => String(item.id_wbs) === String(idWbs) && normalizeDateString(item.fecha) === date);
+      }
+      if (!row) {
+        row = state.masters.pv.find(item => String(item.id_wbs) === String(idWbs));
+      }
       return row ? row.metrado_diario_planificado : "";
     }
 
@@ -1187,12 +1263,19 @@
     function loadMastersFromStorage() {
       for (const key of ["edt", "pv", "rrhh", "almacen"]) {
         const raw = localStorage.getItem(STORAGE_KEYS[key]);
-        if (!raw) continue;
-        try {
-          state.masters[key] = JSON.parse(raw);
-        } catch (error) {
-          localStorage.removeItem(STORAGE_KEYS[key]);
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              state.masters[key] = parsed;
+              continue;
+            }
+          } catch (error) {
+            localStorage.removeItem(STORAGE_KEYS[key]);
+          }
         }
+        // Fallback to internal test masters if storage is empty or invalid
+        state.masters[key] = JSON.parse(JSON.stringify(DEFAULT_MASTERS[key]));
       }
     }
 
